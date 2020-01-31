@@ -21,6 +21,14 @@ tasks {
     }
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).all {
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {

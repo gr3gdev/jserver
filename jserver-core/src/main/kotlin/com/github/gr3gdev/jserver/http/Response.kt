@@ -1,7 +1,5 @@
 package com.github.gr3gdev.jserver.http
 
-import java.io.OutputStream
-
 /**
  * Interface for responses.
  *
@@ -10,9 +8,7 @@ import java.io.OutputStream
 interface Response {
 
     /**
-     * Response output stream.
-     *
-     * @return output
+     * Write a response.
      */
-    fun output(): OutputStream
+    fun write(data: ByteArray)
 }

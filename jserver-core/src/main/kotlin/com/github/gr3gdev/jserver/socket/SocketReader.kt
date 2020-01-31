@@ -16,17 +16,15 @@ internal class SocketReader(private val socket: Socket, private val socketEvents
 
     override fun run() {
         socket.use {
-            val input = it.getInputStream()
-            val output = it.getOutputStream()
             // Response
-            val response = ResponseImpl(output)
-            val reader = BufferedReader(InputStreamReader(input))
+            val response = ResponseImpl(it.getOutputStream())
             // Request
+            val reader = BufferedReader(InputStreamReader(it.getInputStream()))
             val request = RequestImpl(it.remoteSocketAddress.toString(), reader)
             Logger.debug(request)
             // Search event
-            socketEvents.filter { it.match(request) }
-                    .forEach { it.routeListener.handleEvent(request, response) }
+            socketEvents.filter { e -> e.match(request) }
+                    .forEach { e -> e.routeListener.handleEvent(request, response) }
         }
     }
 

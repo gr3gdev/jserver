@@ -29,11 +29,8 @@ class Client {
      * @param message Text message
      */
     fun send(message: String) {
-        socket.getOutputStream().use { output ->
-            DataOutputStream(output).use {
-                it.write(message.toByteArray())
-            }
-        }
+        val output = DataOutputStream(socket.getOutputStream())
+        output.write(message.toByteArray())
     }
 
 }

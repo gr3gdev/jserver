@@ -6,10 +6,10 @@ import java.io.OutputStream
 /**
  * @author Gregory Tardivel
  */
-class ResponseImpl(private val pOutputStream: OutputStream) : Response {
+class ResponseImpl(private val output: OutputStream) : Response {
 
-    override fun output(): OutputStream {
-        return pOutputStream
+    override fun write(data: ByteArray) {
+        output.write(data)
     }
 
 }

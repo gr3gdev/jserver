@@ -2,6 +2,7 @@ package com.github.gr3gdev.jserver.route
 
 import com.github.gr3gdev.jserver.http.Request
 import com.github.gr3gdev.jserver.http.Response
+import java.nio.charset.StandardCharsets
 
 /**
  * RouteListener.
@@ -32,7 +33,7 @@ class RouteListener constructor() {
         return this
     }
 
-    private fun constructResponseHeader(): String {
+    private fun constructResponseHeader(): ByteArray {
         val headers = ArrayList<String>()
         if (responseData.redirect != null) {
             responseData.status = HttpStatus.FOUND
@@ -43,6 +44,7 @@ class RouteListener constructor() {
         }
         responseData.cookies.forEach { (key, value) -> headers.add("Set-Cookie: $key=$value") }
         return "HTTP/1.1 ${responseData.status.code}\r\n${headers.joinToString("\r\n")}\r\n\r\n"
+                .toByteArray(StandardCharsets.UTF_8)
     }
 
     /**
@@ -56,10 +58,7 @@ class RouteListener constructor() {
             this.responseData = ResponseData()
             this.run!!(request, responseData)
         }
-        response.output().use {
-            it.write(constructResponseHeader().toByteArray())
-            it.write(this.responseData.content)
-        }
+        response.write(constructResponseHeader().plus(this.responseData.content))
     }
 
 }

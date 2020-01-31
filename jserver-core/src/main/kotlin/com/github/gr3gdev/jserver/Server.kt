@@ -8,6 +8,7 @@ import com.github.gr3gdev.jserver.route.RouteListener
 import com.github.gr3gdev.jserver.socket.SocketEvent
 import com.github.gr3gdev.jserver.socket.SocketReader
 import java.io.IOException
+import java.lang.RuntimeException
 import java.net.ServerSocket
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -25,6 +26,8 @@ class Server {
     private var port = 9000
     private val socketEvents: MutableList<SocketEvent> = ArrayList()
 
+    private var startupEvent: (() -> Unit)? = null
+
     init {
         socketEvents.add(SocketEvent("/favicon.ico", RequestMethod.GET,
                 RouteListener(HttpStatus.OK, ResponseData.File("/favicon.ico", "image/vnd.microsoft.icon"))))
@@ -36,14 +39,26 @@ class Server {
     }
 
     @Synchronized
-    fun start() {
+    fun start(): Server {
         active = true
         Thread(runnable, "jServer").start()
+        return this
     }
 
     @Synchronized
     fun stop() {
         active = false
+    }
+
+    @Synchronized
+    fun isAlive(): Boolean {
+        return active
+    }
+
+    @Synchronized
+    fun onStartup(event: () -> Unit): Server {
+        startupEvent = event
+        return this
     }
 
     /**
@@ -123,7 +138,7 @@ class Server {
                 try {
                     serverSocket = ServerSocket(port)
                 } catch (exc: IOException) {
-                    Logger.error("Server error", exc)
+                    throw RuntimeException(exc)
                 }
             }
             println(String(bannerTxt, StandardCharsets.UTF_8))
@@ -133,6 +148,9 @@ class Server {
                     Thread(SocketReader(serverSocket!!.accept(), socketEvents), "jServer SocketReader").start()
                 } catch (exc: IOException) {
                     Logger.error("Server socket error", exc)
+                }
+                if (startupEvent != null) {
+                    startupEvent!!()
                 }
             }
             Logger.warn("Server stopped")
