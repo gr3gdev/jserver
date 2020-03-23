@@ -25,5 +25,5 @@ hs_err_pid*
 #Intellij
 .idea
 .iml
-
-.gitconfig
+build/
+out/
