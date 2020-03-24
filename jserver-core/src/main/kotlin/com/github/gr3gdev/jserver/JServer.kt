@@ -1,8 +1,5 @@
 package com.github.gr3gdev.jserver
 
-import com.github.gr3gdev.jserver.http.RequestMethod
-import com.github.gr3gdev.jserver.route.RouteListener
-
 /**
  * jOwl Utils.
  *

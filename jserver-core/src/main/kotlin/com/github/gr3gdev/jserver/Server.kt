@@ -61,7 +61,15 @@ class Server {
         return this
     }
 
-    private fun process(pPath: String, pRequestMethod: RequestMethod, pRouteListener: RouteListener) {
+    /**
+     * Process a Request.
+     *
+     * @param pPath          Path URL
+     * @param pRequestMethod Method HTTP
+     * @param pRouteListener Route listener
+     * @return Server
+     */
+    fun process(pPath: String, pRequestMethod: RequestMethod, pRouteListener: RouteListener) {
         socketEvents.add(SocketEvent(pPath, pRequestMethod, pRouteListener))
     }
 
