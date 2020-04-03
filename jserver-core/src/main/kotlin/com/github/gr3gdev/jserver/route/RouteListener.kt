@@ -8,7 +8,7 @@ import com.github.gr3gdev.jserver.http.Response
  *
  * @author Gregory Tardivel
  */
-interface RouteListener {
+class RouteListener(private val status: HttpStatus, private val contentType: String, private val content: String) {
 
     /**
      * Execute RouteListener.
@@ -16,5 +16,11 @@ interface RouteListener {
      * @param request HTTP Request
      * @param response HTTP Response
      */
-    fun handleEvent(request: Request, response: Response)
+    fun handleEvent(request: Request, response: Response) {
+        val headers = "HTTP/1.1 $status\r\nContent-Type: $contentType\r\nContent-Length: ${content.length}\r\n\r\n"
+        response.output().use {
+            it.write((headers + content).toByteArray())
+        }
+    }
+
 }

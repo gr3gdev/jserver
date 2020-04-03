@@ -1,4 +1,4 @@
-package com.github.gr3gdev.jserver.route.html
+package com.github.gr3gdev.jserver.route
 
 enum class HttpStatus(val code: String) {
     CONTINUE("100 Continue"),

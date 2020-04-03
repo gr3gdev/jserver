@@ -82,7 +82,7 @@ class Server {
                     exc.printStackTrace()
                 }
             }
-            println("Server started")
+            println("Server started on port: $port")
             while (active) {
                 try {
                     val socket = serverSocket!!.accept()
