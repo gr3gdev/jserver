@@ -35,6 +35,9 @@ internal object ReaderUtil {
             payload.append(pReader.read().toChar())
         }
         if (payload.isNotEmpty()) {
+            if (payload.toString().contains("Content-Disposition: form-data;")) {
+                println("multipart/form-data is not implemented !")
+            }
             val pTokens = StringTokenizer(payload.toString(), "&")
             while (pTokens.hasMoreTokens()) {
                 val vTokens = StringTokenizer(

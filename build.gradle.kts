@@ -8,7 +8,7 @@ buildscript {
 }
 
 group = "com.github.gr3gdev"
-version = "1.0.0-SNAPSHOT"
+version = "0.1.0"
 
 allprojects {
 
