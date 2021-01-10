@@ -1,6 +1,8 @@
 package com.github.gr3gdev.jserver
 
 import com.github.gr3gdev.jserver.http.RequestMethod
+import com.github.gr3gdev.jserver.logger.Logger
+import com.github.gr3gdev.jserver.route.HttpStatus
 import com.github.gr3gdev.jserver.route.RouteListener
 import com.github.gr3gdev.jserver.socket.SocketEvent
 import com.github.gr3gdev.jserver.socket.SocketReader
@@ -20,6 +22,11 @@ class Server {
     private var serverSocket: ServerSocket? = null
     private var port = 9000
     private val socketEvents: MutableList<SocketEvent> = ArrayList()
+
+    init {
+        socketEvents.add(SocketEvent("/favicon.ico", RequestMethod.GET,
+                RouteListener(HttpStatus.OK, "/jserver.ico")))
+    }
 
     fun port(pPort: Int): Server {
         port = pPort
@@ -69,7 +76,7 @@ class Server {
      * @param pRouteListener Route listener
      * @return Server
      */
-    fun process(pPath: String, pRequestMethod: RequestMethod, pRouteListener: RouteListener) {
+    private fun process(pPath: String, pRequestMethod: RequestMethod, pRouteListener: RouteListener) {
         socketEvents.add(SocketEvent(pPath, pRequestMethod, pRouteListener))
     }
 
@@ -82,7 +89,7 @@ class Server {
                     exc.printStackTrace()
                 }
             }
-            println("Server started on port: $port")
+            Logger.info("Server started on port: $port")
             while (active) {
                 try {
                     val socket = serverSocket!!.accept()
@@ -92,7 +99,7 @@ class Server {
                     exc.printStackTrace()
                 }
             }
-            println("Server stopped")
+            Logger.info("Server stopped")
         }
     }
 }

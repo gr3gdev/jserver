@@ -16,7 +16,12 @@ class RouteListener constructor() {
     constructor(status: HttpStatus, contentType: String, content: String) : this() {
         responseData.status = status
         responseData.contentType = contentType
-        responseData.content = content
+        responseData.content = content.toByteArray()
+    }
+
+    constructor(status: HttpStatus, filePath: String) : this() {
+        responseData.status = status
+        responseData.file(filePath)
     }
 
     /**
@@ -27,6 +32,19 @@ class RouteListener constructor() {
         return this
     }
 
+    private fun constructResponseHeader(): String {
+        val headers = ArrayList<String>()
+        if (responseData.redirect != null) {
+            responseData.status = HttpStatus.FOUND
+            headers.add("Location: ${responseData.redirect}")
+        } else {
+            headers.add("Content-Type: ${responseData.contentType}")
+            headers.add("Content-Length: ${responseData.content.size}")
+        }
+        responseData.cookies.forEach { (key, value) -> headers.add("Set-Cookie: $key=$value") }
+        return "HTTP/1.1 ${responseData.status.code}\r\n${headers.joinToString("\r\n")}\r\n\r\n"
+    }
+
     /**
      * Execute RouteListener.
      *
@@ -35,11 +53,12 @@ class RouteListener constructor() {
      */
     fun handleEvent(request: Request, response: Response) {
         if (this.run != null) {
+            this.responseData = ResponseData()
             this.run!!(request, responseData)
         }
-        val headers = "HTTP/1.1 ${responseData.status.code}\r\nContent-Type: ${responseData.contentType}\r\nContent-Length: ${responseData.content.length}\r\n\r\n"
         response.output().use {
-            it.write((headers + responseData.content).toByteArray())
+            it.write(constructResponseHeader().toByteArray())
+            it.write(this.responseData.content)
         }
     }
 

@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") version "1.3.61"
+    kotlin("jvm") version "1.4.10"
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib"))
     testImplementation("org.mockito:mockito-core:${rootProject.extra["mockito.version"]}")
     testImplementation("org.mockito:mockito-junit-jupiter:${rootProject.extra["mockito.version"]}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${rootProject.extra["junit.version"]}")
@@ -15,9 +15,9 @@ dependencies {
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = rootProject.extra["java.version"] as String
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = rootProject.extra["java.version"] as String
+        copy {
+            from("build/resources/main")
+            into("build/classes/kotlin/main")
+        }
     }
 }

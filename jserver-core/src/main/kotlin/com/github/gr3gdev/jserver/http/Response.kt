@@ -10,13 +10,6 @@ import java.io.OutputStream
 interface Response {
 
     /**
-     * HTTP Response Headers.
-     *
-     * @return headers
-     */
-    fun headers(): Map<String, String>
-
-    /**
      * Response output stream.
      *
      * @return output

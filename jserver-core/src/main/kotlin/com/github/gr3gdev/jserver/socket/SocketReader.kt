@@ -4,6 +4,7 @@ import com.github.gr3gdev.jserver.http.Request
 import com.github.gr3gdev.jserver.http.impl.RequestImpl
 import com.github.gr3gdev.jserver.http.Response
 import com.github.gr3gdev.jserver.http.impl.ResponseImpl
+import com.github.gr3gdev.jserver.logger.Logger
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -21,16 +22,17 @@ internal class SocketReader(private val socket: Socket, private val socketEvents
             val input = socket.getInputStream()
             // Response
             val response: Response = ResponseImpl(socket.getOutputStream())
-            val reader = BufferedReader(InputStreamReader(input))
-            // Request
-            val request: Request = RequestImpl(reader)
-            println(request)
-            // Search event
-            for (event in socketEvents) { // Event by HTTP method & by Path
-                if (event.method.name.equals(request.method(), ignoreCase = true)
-                        && event.path == request.path()) {
-                    // Execute event
-                    event.routeListener.handleEvent(request, response)
+            BufferedReader(InputStreamReader(input)).use { reader ->
+                // Request
+                val request: Request = RequestImpl(reader)
+                Logger.debug(request)
+                // Search event
+                for (event in socketEvents) { // Event by HTTP method & by Path
+                    if (event.method.name.equals(request.method(), ignoreCase = true)
+                            && event.path == request.path()) {
+                        // Execute event
+                        event.routeListener.handleEvent(request, response)
+                    }
                 }
             }
         } catch (exc: IOException) {

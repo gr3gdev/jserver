@@ -1,5 +1,6 @@
 package com.github.gr3gdev.jserver.http.impl
 
+import com.github.gr3gdev.jserver.logger.Logger
 import java.io.BufferedReader
 import java.io.IOException
 import java.util.*
@@ -13,22 +14,22 @@ internal object ReaderUtil {
     fun loadHeaders(pReader: BufferedReader): Map<String, String> {
         val headers: MutableMap<String, String> = HashMap()
         var headerLine: String
-        while (pReader.readLine().also { headerLine = it }.isNotEmpty()) {
-            val hTokens = StringTokenizer(headerLine, ": ")
+        while (pReader.readLine().also { headerLine = it }.isNotBlank()) {
+            val hTokens = StringTokenizer(headerLine, ":")
             var key: String
             if (hTokens.hasMoreTokens()) {
                 key = hTokens.nextToken()
                 if (hTokens.hasMoreTokens()) {
-                    headers[key] = hTokens.nextToken()
+                    headers[key] = hTokens.nextToken().trim()
                 }
             }
         }
+        Logger.debug("HEADERS: $headers")
         return headers
     }
 
     @Throws(IOException::class)
-    fun loadParameters(
-            pReader: BufferedReader): Map<String, String> {
+    fun loadParameters(pReader: BufferedReader): Map<String, String> {
         val parameters: MutableMap<String, String> = HashMap()
         val payload = StringBuilder()
         while (pReader.ready()) {
@@ -36,7 +37,7 @@ internal object ReaderUtil {
         }
         if (payload.isNotEmpty()) {
             if (payload.toString().contains("Content-Disposition: form-data;")) {
-                println("multipart/form-data is not implemented !")
+                Logger.error("multipart/form-data is not implemented !")
             }
             val pTokens = StringTokenizer(payload.toString(), "&")
             while (pTokens.hasMoreTokens()) {
@@ -51,6 +52,7 @@ internal object ReaderUtil {
                 }
             }
         }
+        Logger.debug("PARAMETERS: $parameters")
         return parameters
     }
 }

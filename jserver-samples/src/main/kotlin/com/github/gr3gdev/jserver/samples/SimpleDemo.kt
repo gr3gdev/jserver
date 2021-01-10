@@ -1,5 +1,6 @@
-package com.github.gr3gdev.jserver
+package com.github.gr3gdev.jserver.samples
 
+import com.github.gr3gdev.jserver.JServer
 import com.github.gr3gdev.jserver.route.HttpStatus
 import com.github.gr3gdev.jserver.route.RouteListener
 
@@ -21,7 +22,7 @@ fun main() {
                 val msg = req.params()["message"]
                 route.status = HttpStatus.OK
                 route.contentType = "text/html"
-                route.content = "<!DOCTYPE HTML>" +
+                route.content = ("<!DOCTYPE HTML>" +
                         "<html>" +
                         "<head><title>DEMO</title></head>" +
                         "<body>" +
@@ -31,17 +32,17 @@ fun main() {
                         "<input type='submit' name='action' value='send'/>" +
                         "</form>" +
                         "</body>" +
-                        "</html>"
+                        "</html>").toByteArray()
             })
             .get("/json", RouteListener().process { req, route ->
                 route.status = HttpStatus.OK
                 route.contentType = "application/json"
-                route.content = "{\"name\":\"Test\", \"status\":\"SUCCESS\"}"
+                route.content = "{\"name\":\"Test\", \"status\":\"SUCCESS\"}".toByteArray()
             })
             .get("/forbidden", RouteListener().process { req, route ->
                 route.status = HttpStatus.FORBIDDEN
                 route.contentType = "text/plain"
-                route.content = "Access forbidden !"
+                route.content = "Access forbidden !".toByteArray()
             })
             .start()
 }
