@@ -14,19 +14,5 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Checkout maven-repository
-        uses: actions/checkout@v2
-        with:
-          ref: maven-repository
-          path: build/maven-repository
       - name: Publish
-        run: gradle publish
-      - name: Commit maven files
-        run: |
-          cd build/maven-repository
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git status
-          git add *
-          git commit -m "Publish version"
-          git push
+        run: gradle publish -Pgpr.user=gr3gdev -Pgpr.key=${{ secrets.REPO_TOKEN }}

@@ -25,7 +25,12 @@ publishing {
     }
     repositories {
         maven {
-            url = uri("${rootProject.buildDir}/maven-repository")
+            name = "GithubPackage"
+            url = uri("https://maven.pkg.github.com/gr3gdev/jserver")
+            credentials {
+                username = project.findProperty("gpr.user")
+                password = project.findProperty("gpr.key")
+            }
         }
     }
 }
