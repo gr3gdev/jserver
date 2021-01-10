@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.4.10"
+    `maven-publish`
 }
 
 dependencies {
@@ -18,6 +19,22 @@ tasks {
         copy {
             from("build/resources/main")
             into("build/classes/kotlin/main")
+        }
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = rootProject.group as String
+            artifactId = "jserver-core"
+            version = rootProject.version as String
+            from(components["java"])
+        }
+    }
+    repositories {
+        maven {
+            url = uri("${rootProject.buildDir}/maven-repository")
         }
     }
 }

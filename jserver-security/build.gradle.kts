@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.4.10"
+    `maven-publish`
 }
 
 dependencies {
@@ -11,4 +12,20 @@ dependencies {
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
     implementation(project(":jserver-core"))
     testImplementation("junit:junit:4.13")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = rootProject.group as String
+            artifactId = "jserver-security"
+            version = rootProject.version as String
+            from(components["java"])
+        }
+    }
+    repositories {
+        maven {
+            url = uri("${rootProject.buildDir}/maven-repository")
+        }
+    }
 }
