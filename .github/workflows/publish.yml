@@ -17,16 +17,16 @@ jobs:
       - name: Checkout maven-repository
         uses: actions/checkout@v2
         with:
-          repository: gr3gdev/maven-repository
+          ref: maven-repository
           path: build/maven-repository
       - name: Publish
         run: gradle publish
       - name: Commit maven files
         run: |
           cd build/maven-repository
-          git config user.name "${{ secrets.REPO_USER_FULLNAME }}"
-          git config user.email "${{ secrets.REPO_EMAIL }}"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           git status
           git add *
           git commit -m "Publish version"
-          git push https://gr3gdev:${{ secret.REPO_TOKEN }}@github.com/gr3gdev/maven-repository.git
+          git push
