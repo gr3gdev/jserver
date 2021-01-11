@@ -18,13 +18,15 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: gr3gdev/maven-repository
-          path: jserver/build/maven-repository
+          path: build/maven-repository
       - name: Publish package
         run: gradle publish
       - name: Push on my repository
         run: |
+          cd build/maven-repository
           git config user.name github-actions
           git config user.email github-actions@github.com
+          git status
           git add .
           git commit -m "publish version"
           git push
