@@ -23,9 +23,9 @@ jobs:
         run: gradle publish
       - name: Push on my repository
         run: |
-          git config user.name "${{ secrets.REPO_USERNAME }}"
-          git config user.email "${{ secrets.REPO_EMAIL }}"
           cd build/maven-repository
+          git config user.name "${{ secrets.REPO_USER_FULLNAME }}"
+          git config user.email "${{ secrets.REPO_EMAIL }}"
           git status
           git add *
           git commit -m "publish version"
