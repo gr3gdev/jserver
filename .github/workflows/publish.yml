@@ -29,10 +29,4 @@ jobs:
           git status
           git add *
           git commit -m "Publish version"
-      - name: Push to maven-repository
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.REPO_TOKEN }}
-          repository: gr3gdev/maven-repository
-          branch: master
-          directory: build/maven-repository
+          git push https://gr3gdev:${{ secret.REPO_TOKEN }}@github.com/gr3gdev/maven-repository.git
