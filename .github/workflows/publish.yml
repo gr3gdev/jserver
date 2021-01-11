@@ -22,12 +22,10 @@ jobs:
       - name: Publish package
         run: gradle publish
       - name: Push to my repository
-        uses: cpina/github-action-push-to-another-repository@master
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.REPO_TOKEN }}
-        with:
-          source-directory: 'build/maven-repository'
-          destination-github-username: 'gr3gdev'
-          destination-repository-name: 'maven-repository'
-          commit-message: "Publish version"
-          user-email: ${{ secrets.REPO_EMAIL }}
+        run: |
+          cd build/maven-repository
+          git config user.name "${{ secrets.REPO_USER_FULLNAME }}"
+          git config user.email "${{ secrets.REPO_EMAIL }}"
+          git status
+          git commit -m "Publish version" -a
+          git push https://gr3gdev:${{ secrets.REPO_TOKEN }}@github.com/gr3gdev/maven-repository.git
