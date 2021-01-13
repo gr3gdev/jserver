@@ -28,8 +28,8 @@ publishing {
             name = "GithubPackage"
             url = uri("https://maven.pkg.github.com/gr3gdev/jserver")
             credentials {
-                username = System.getProperty("GITHUB_USERNAME") as String? ?: System.getenv("GITHUB_USERNAME")
-                password = System.getProperty("GITHUB_TOKEN") as String? ?: System.getenv("GITHUB_TOKEN")
+                username = project.findProperty("gpr.user") as String? ?: System.getProperty("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getProperty("GITHUB_TOKEN")
             }
         }
     }
