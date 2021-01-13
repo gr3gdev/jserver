@@ -61,6 +61,11 @@ class RequestImpl(reader: BufferedReader) : Request {
         // HEADERS
         headers = loadHeaders(reader)
         // HTTP PARAMETERS
-        parameters = loadParameters(reader)
+        var pathParameters: String? = null
+        if (path.contains("?")) {
+            pathParameters = path.substring(path.indexOf("?") + 1)
+            path = path.substring(0, path.indexOf("?"))
+        }
+        parameters = loadParameters(pathParameters, reader)
     }
 }

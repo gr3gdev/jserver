@@ -34,12 +34,12 @@ fun main() {
                         "</body>" +
                         "</html>").toByteArray()
             })
-            .get("/json", RouteListener().process { req, route ->
+            .get("/json", RouteListener().process { _, route ->
                 route.status = HttpStatus.OK
                 route.contentType = "application/json"
                 route.content = "{\"name\":\"Test\", \"status\":\"SUCCESS\"}".toByteArray()
             })
-            .get("/forbidden", RouteListener().process { req, route ->
+            .get("/forbidden", RouteListener().process { _, route ->
                 route.status = HttpStatus.FORBIDDEN
                 route.contentType = "text/plain"
                 route.content = "Access forbidden !".toByteArray()

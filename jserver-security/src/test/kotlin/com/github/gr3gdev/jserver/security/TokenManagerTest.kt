@@ -8,7 +8,7 @@ import org.junit.Before
 import org.junit.Test
 import java.security.SecureRandom
 
-class TokenExtractorTest {
+class TokenManagerTest {
 
     private class UserTest : UserData {
 
@@ -41,44 +41,30 @@ class TokenExtractorTest {
 
     @Test
     fun `Test getToken from Authorization`() {
-        val tokenExtractor = TokenExtractor.secretKey("my_secret-ForTESTS")
+        val tokenExtractor = TokenManager.secretKey("my_secret-ForTESTS")
                 .id("jServer").issuer("GR3Gdev")
         val token = SecureRandom().nextLong().toString()
         val request = RequestTest(mapOf(Pair("Authorization", "Bearer $token")))
-        assertEquals(token, tokenExtractor.getToken(request))
+        assertEquals(token, tokenExtractor.getTokenFromHeader(request))
     }
 
     @Test
     fun `Test getToken from Cookie`() {
-        val tokenExtractor = TokenExtractor.generateSecretKey(128)
+        val tokenExtractor = TokenManager.generateSecretKey(128)
                 .id("jServer").issuer("GR3Gdev")
         val token = SecureRandom().nextLong().toString()
-        val request = RequestTest(mapOf(Pair("Cookie", "COOKIE1=A; GR3Gdev_JWT=$token; COOKIE2=B; COOKIE3=C")))
-        assertEquals(token, tokenExtractor.getToken(request))
+        val request = RequestTest(mapOf(Pair("Cookie", "COOKIE1=A; MY_COOKIE=$token; COOKIE2=B; COOKIE3=C")))
+        assertEquals(token, tokenExtractor.getTokenFromCookie(request, "MY_COOKIE"))
     }
 
     @Test
-    fun `Test getUserData from Authorization`() {
-        val tokenExtractor = TokenExtractor.generateSecretKey(128)
+    fun `Test getUserData from token`() {
+        val tokenExtractor = TokenManager.generateSecretKey(128)
                 .id("jServer").issuer("GR3Gdev")
         val userData = UserTest("Name1", 1)
         val token = tokenExtractor.createToken(userData, 60 * 60 * 1000)
-        val request = RequestTest(mapOf(Pair("Authorization", "Bearer $token")))
-        val user = tokenExtractor.getUserData(request, UserTest::class.java)
+        val user = tokenExtractor.getUserData(token, UserTest::class.java)
         assertEquals("Name1", user?.name)
         assertEquals(1, user?.count)
     }
-
-    @Test
-    fun `Test getUserData from Cookie`() {
-        val tokenExtractor = TokenExtractor.generateSecretKey(256)
-                .id("jServer").issuer("GR3Gdev")
-        val userData = UserTest("Name2", 2)
-        val token = tokenExtractor.createToken(userData, 60 * 60 * 1000)
-        val request = RequestTest(mapOf(Pair("Cookie", "COOKIE1=A; GR3Gdev_JWT=$token; COOKIE2=B")))
-        val user = tokenExtractor.getUserData(request, UserTest::class.java)
-        assertEquals("Name2", user?.name)
-        assertEquals(2, user?.count)
-    }
-
 }

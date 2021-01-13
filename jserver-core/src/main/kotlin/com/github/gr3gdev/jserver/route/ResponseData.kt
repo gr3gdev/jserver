@@ -16,6 +16,9 @@ class ResponseData {
     var redirect: String? = null
     val cookies = HashMap<String, String>()
 
+    /**
+     * Response from file.
+     */
     fun file(file: File) {
         Logger.debug("Load content from $file")
         contentType = file.contentType

@@ -11,10 +11,10 @@ import java.util.*
 internal object ReaderUtil {
 
     @Throws(IOException::class)
-    fun loadHeaders(pReader: BufferedReader): Map<String, String> {
+    fun loadHeaders(pReader: BufferedReader?): Map<String, String> {
         val headers: MutableMap<String, String> = HashMap()
-        var headerLine: String
-        while (pReader.readLine().also { headerLine = it }.isNotBlank()) {
+        var headerLine: String? = ""
+        while (pReader?.readLine().also { headerLine = it }?.isNotBlank() == true) {
             val hTokens = StringTokenizer(headerLine, ":")
             var key: String
             if (hTokens.hasMoreTokens()) {
@@ -29,11 +29,14 @@ internal object ReaderUtil {
     }
 
     @Throws(IOException::class)
-    fun loadParameters(pReader: BufferedReader): Map<String, String> {
+    fun loadParameters(pathParameters: String?, pReader: BufferedReader?): Map<String, String> {
         val parameters: MutableMap<String, String> = HashMap()
         val payload = StringBuilder()
-        while (pReader.ready()) {
+        while (pReader?.ready() == true) {
             payload.append(pReader.read().toChar())
+        }
+        if (pathParameters != null) {
+            payload.append(pathParameters)
         }
         if (payload.isNotEmpty()) {
             if (payload.toString().contains("Content-Disposition: form-data;")) {

@@ -4,10 +4,10 @@ import com.github.gr3gdev.jserver.JServer
 import com.github.gr3gdev.jserver.logger.Logger
 import com.github.gr3gdev.jserver.samples.route.LoginRoute
 import com.github.gr3gdev.jserver.samples.route.SecureRoute
-import com.github.gr3gdev.jserver.security.TokenExtractor
+import com.github.gr3gdev.jserver.security.TokenManager
 
 fun main() {
-    val tokenExtractor = TokenExtractor.id("jServerDemo").issuer("GR3Gdev")
+    val tokenExtractor = TokenManager.id("jServerDemo").issuer("GR3Gdev")
             .generateSecretKey(256)
     Logger.changeLevel(Logger.Level.DEBUG)
     JServer.server()

@@ -1,0 +1,6 @@
+GET /test?param1=1&param2=why HTTP/1.1
+User-Agent: Mozilla/4.0
+Host: www.example.com
+Accept-Language: en, fr
+Connection: Keep-Alive
+
