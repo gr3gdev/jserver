@@ -2,6 +2,7 @@ package com.github.gr3gdev.jserver.samples.route
 
 import com.github.gr3gdev.jserver.logger.Logger
 import com.github.gr3gdev.jserver.route.HttpStatus
+import com.github.gr3gdev.jserver.route.ResponseData
 import com.github.gr3gdev.jserver.route.RouteListener
 import com.github.gr3gdev.jserver.samples.bean.User
 import com.github.gr3gdev.jserver.security.TokenExtractor
@@ -12,7 +13,7 @@ object LoginRoute {
     private val bCryptPasswordManager = BCryptPasswordManager(10)
     private val user = User("user", bCryptPasswordManager.encode("password"))
 
-    fun get() = RouteListener(HttpStatus.OK, "/pages/login.html")
+    fun get() = RouteListener(HttpStatus.OK, ResponseData.File("/pages/login.html", "text/html"))
 
     fun post(tokenExtractor: TokenExtractor) = RouteListener().process { request, responseData ->
         val username = request.params()["username"]

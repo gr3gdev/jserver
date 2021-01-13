@@ -1,8 +1,8 @@
 package com.github.gr3gdev.jserver.socket
 
 import com.github.gr3gdev.jserver.http.Request
-import com.github.gr3gdev.jserver.http.impl.RequestImpl
 import com.github.gr3gdev.jserver.http.Response
+import com.github.gr3gdev.jserver.http.impl.RequestImpl
 import com.github.gr3gdev.jserver.http.impl.ResponseImpl
 import com.github.gr3gdev.jserver.logger.Logger
 import java.io.BufferedReader
@@ -28,8 +28,7 @@ internal class SocketReader(private val socket: Socket, private val socketEvents
                 Logger.debug(request)
                 // Search event
                 for (event in socketEvents) { // Event by HTTP method & by Path
-                    if (event.method.name.equals(request.method(), ignoreCase = true)
-                            && event.path == request.path()) {
+                    if (event.match(request)) {
                         // Execute event
                         event.routeListener.handleEvent(request, response)
                     }

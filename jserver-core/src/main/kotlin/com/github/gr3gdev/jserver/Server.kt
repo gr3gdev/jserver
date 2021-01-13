@@ -3,6 +3,7 @@ package com.github.gr3gdev.jserver
 import com.github.gr3gdev.jserver.http.RequestMethod
 import com.github.gr3gdev.jserver.logger.Logger
 import com.github.gr3gdev.jserver.route.HttpStatus
+import com.github.gr3gdev.jserver.route.ResponseData
 import com.github.gr3gdev.jserver.route.RouteListener
 import com.github.gr3gdev.jserver.socket.SocketEvent
 import com.github.gr3gdev.jserver.socket.SocketReader
@@ -25,7 +26,7 @@ class Server {
 
     init {
         socketEvents.add(SocketEvent("/favicon.ico", RequestMethod.GET,
-                RouteListener(HttpStatus.OK, "/jserver.ico")))
+                RouteListener(HttpStatus.OK, ResponseData.File("/favicon.ico", "image/vnd.microsoft.icon"))))
     }
 
     fun port(pPort: Int): Server {
@@ -76,7 +77,7 @@ class Server {
      * @param pRouteListener Route listener
      * @return Server
      */
-    private fun process(pPath: String, pRequestMethod: RequestMethod, pRouteListener: RouteListener) {
+    fun process(pPath: String, pRequestMethod: RequestMethod, pRouteListener: RouteListener) {
         socketEvents.add(SocketEvent(pPath, pRequestMethod, pRouteListener))
     }
 

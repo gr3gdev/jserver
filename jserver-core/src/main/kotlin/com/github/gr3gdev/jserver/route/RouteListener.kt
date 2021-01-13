@@ -19,9 +19,9 @@ class RouteListener constructor() {
         responseData.content = content.toByteArray()
     }
 
-    constructor(status: HttpStatus, filePath: String) : this() {
+    constructor(status: HttpStatus, file: ResponseData.File) : this() {
         responseData.status = status
-        responseData.file(filePath)
+        responseData.file(file)
     }
 
     /**

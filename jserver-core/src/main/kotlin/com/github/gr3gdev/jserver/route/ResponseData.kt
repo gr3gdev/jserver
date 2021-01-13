@@ -1,10 +1,6 @@
 package com.github.gr3gdev.jserver.route
 
-import java.io.File
-import java.io.FileInputStream
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import java.nio.file.Paths
+import com.github.gr3gdev.jserver.logger.Logger
 
 /**
  * ResponseData.
@@ -20,12 +16,16 @@ class ResponseData {
     var redirect: String? = null
     val cookies = HashMap<String, String>()
 
-    fun file(filePath: String) {
-        val fileURI = javaClass.getResource(filePath)?.toURI()
-                ?: throw RuntimeException("File not found: $filePath")
-        val path = Paths.get(fileURI)
-        contentType = Files.probeContentType(path)
-        content = File(fileURI).inputStream().readBytes()
+    fun file(file: File) {
+        Logger.debug("Load content from $file")
+        contentType = file.contentType
+        content = javaClass.getResourceAsStream(file.path).readBytes()
+    }
+
+    class File(val path: String, val contentType: String) {
+        override fun toString(): String {
+            return "File(path='$path', contentType='$contentType')"
+        }
     }
 
 }
