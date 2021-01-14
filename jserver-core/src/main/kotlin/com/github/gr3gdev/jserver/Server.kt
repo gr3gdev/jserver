@@ -87,20 +87,19 @@ class Server {
                 try {
                     serverSocket = ServerSocket(port)
                 } catch (exc: IOException) {
-                    exc.printStackTrace()
+                    Logger.error("Server error", exc)
                 }
             }
             Logger.info("Server started on port: $port")
             while (active) {
                 try {
                     val socket = serverSocket!!.accept()
-                    val threadSocket = Thread(SocketReader(socket, socketEvents), "jServer SocketReader")
-                    threadSocket.start()
+                    Thread(SocketReader(socket, socketEvents), "jServer SocketReader").start()
                 } catch (exc: IOException) {
-                    exc.printStackTrace()
+                    Logger.error("Server socket error", exc)
                 }
             }
-            Logger.info("Server stopped")
+            Logger.warn("Server stopped")
         }
     }
 }

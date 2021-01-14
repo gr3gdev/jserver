@@ -8,7 +8,7 @@ object Logger {
     private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
     enum class Level(val priority: Int) {
-        DEBUG(99), INFO(10), ERROR(1)
+        DEBUG(99), INFO(10), WARN(2), ERROR(1)
     }
 
     private var level = Level.INFO
@@ -31,8 +31,16 @@ object Logger {
         log(msg, Level.DEBUG)
     }
 
+    fun warn(msg: Any) {
+        log(msg, Level.WARN)
+    }
+
     fun error(msg: Any) {
         log(msg, Level.ERROR)
+    }
+
+    fun error(msg: Any, exc: Throwable) {
+        log("$msg : ${exc.stackTrace.joinToString("\n")}", Level.ERROR)
     }
 
 }

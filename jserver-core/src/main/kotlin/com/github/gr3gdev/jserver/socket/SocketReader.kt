@@ -24,7 +24,7 @@ internal class SocketReader(private val socket: Socket, private val socketEvents
             val response: Response = ResponseImpl(socket.getOutputStream())
             BufferedReader(InputStreamReader(input)).use { reader ->
                 // Request
-                val request: Request = RequestImpl(reader)
+                val request: Request = RequestImpl(socket.remoteSocketAddress.toString(), reader)
                 Logger.debug(request)
                 // Search event
                 for (event in socketEvents) { // Event by HTTP method & by Path
@@ -35,7 +35,7 @@ internal class SocketReader(private val socket: Socket, private val socketEvents
                 }
             }
         } catch (exc: IOException) {
-            exc.printStackTrace()
+            Logger.error("Socket reader error", exc)
         }
     }
 

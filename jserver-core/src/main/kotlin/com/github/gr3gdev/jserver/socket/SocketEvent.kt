@@ -2,7 +2,6 @@ package com.github.gr3gdev.jserver.socket
 
 import com.github.gr3gdev.jserver.http.Request
 import com.github.gr3gdev.jserver.http.RequestMethod
-import com.github.gr3gdev.jserver.logger.Logger
 import com.github.gr3gdev.jserver.route.RouteListener
 import java.util.regex.Pattern
 
@@ -35,7 +34,7 @@ internal class SocketEvent(path: String, val method: RequestMethod, val routeLis
             matching = true
             if (matcher.groupCount() > 0 && pathParameters.isNotEmpty()) {
                 for (i in 1..matcher.groupCount()) {
-                    (request.params() as MutableMap)[pathParameters[i]!!] = matcher.group(i)
+                    request.params(pathParameters[i]!!, matcher.group(i))
                 }
             }
         }

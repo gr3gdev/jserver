@@ -1,5 +1,6 @@
 package com.github.gr3gdev.jserver.security
 
+import com.github.gr3gdev.jserver.http.RemoteAddress
 import com.github.gr3gdev.jserver.http.Request
 import com.github.gr3gdev.jserver.logger.Logger
 import com.github.gr3gdev.jserver.security.user.UserData
@@ -30,8 +31,27 @@ class TokenManagerTest {
         override fun path(): String = ""
         override fun method(): String = "GET"
         override fun protocol(): String = "http"
-        override fun headers(): Map<String, String> = headers
-        override fun params(): Map<String, String> = HashMap()
+        override fun headers(key: String): String? = headers[key]
+        override fun headers(key: String, value: String?) {}
+        override fun headersNames(): MutableSet<String> {
+            TODO("Not yet implemented")
+        }
+
+        override fun params(key: String): String? {
+            TODO("Not yet implemented")
+        }
+
+        override fun params(key: String, value: String?) {
+            TODO("Not yet implemented")
+        }
+
+        override fun paramsNames(): MutableSet<String> {
+            TODO("Not yet implemented")
+        }
+
+        override fun remoteAddress(): RemoteAddress {
+            TODO("Not yet implemented")
+        }
     }
 
     @Before

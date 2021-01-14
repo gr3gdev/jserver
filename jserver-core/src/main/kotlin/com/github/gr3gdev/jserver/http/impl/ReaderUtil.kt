@@ -1,5 +1,6 @@
 package com.github.gr3gdev.jserver.http.impl
 
+import com.github.gr3gdev.jserver.http.Request
 import com.github.gr3gdev.jserver.logger.Logger
 import java.io.BufferedReader
 import java.io.IOException
@@ -11,8 +12,7 @@ import java.util.*
 internal object ReaderUtil {
 
     @Throws(IOException::class)
-    fun loadHeaders(pReader: BufferedReader?): Map<String, String> {
-        val headers: MutableMap<String, String> = HashMap()
+    fun loadHeaders(request: Request, pReader: BufferedReader?) {
         var headerLine: String? = ""
         while (pReader?.readLine().also { headerLine = it }?.isNotBlank() == true) {
             val hTokens = StringTokenizer(headerLine, ":")
@@ -20,17 +20,15 @@ internal object ReaderUtil {
             if (hTokens.hasMoreTokens()) {
                 key = hTokens.nextToken()
                 if (hTokens.hasMoreTokens()) {
-                    headers[key] = hTokens.nextToken().trim()
+                    request.headers(key, hTokens.nextToken().trim())
                 }
             }
         }
-        Logger.debug("HEADERS: $headers")
-        return headers
     }
 
     @Throws(IOException::class)
-    fun loadParameters(pathParameters: String?, pReader: BufferedReader?): Map<String, String> {
-        val parameters: MutableMap<String, String> = HashMap()
+    fun loadParameters(request: Request, pathParameters: String?, pReader: BufferedReader?) {
+        val contentType = request.headers("Content-Type")
         val payload = StringBuilder()
         while (pReader?.ready() == true) {
             payload.append(pReader.read().toChar())
@@ -39,23 +37,29 @@ internal object ReaderUtil {
             payload.append(pathParameters)
         }
         if (payload.isNotEmpty()) {
+            if (contentType == null) {
+                Logger.warn("No Content-Type found")
+            }
             if (payload.toString().contains("Content-Disposition: form-data;")) {
                 Logger.error("multipart/form-data is not implemented !")
             }
-            val pTokens = StringTokenizer(payload.toString(), "&")
-            while (pTokens.hasMoreTokens()) {
-                val vTokens = StringTokenizer(
-                        pTokens.nextToken(), "=")
-                var key: String
-                if (vTokens.hasMoreTokens()) {
-                    key = vTokens.nextToken()
+            if (contentType == "application/json") {
+                request.params("body", payload.toString())
+            }
+            if (contentType == "application/x-www-form-urlencoded" || pathParameters != null) {
+                val pTokens = StringTokenizer(payload.toString(), "&")
+                while (pTokens.hasMoreTokens()) {
+                    val vTokens = StringTokenizer(
+                            pTokens.nextToken(), "=")
+                    var key: String
                     if (vTokens.hasMoreTokens()) {
-                        parameters[key] = vTokens.nextToken()
+                        key = vTokens.nextToken()
+                        if (vTokens.hasMoreTokens()) {
+                            request.params(key, vTokens.nextToken())
+                        }
                     }
                 }
             }
         }
-        Logger.debug("PARAMETERS: $parameters")
-        return parameters
     }
 }

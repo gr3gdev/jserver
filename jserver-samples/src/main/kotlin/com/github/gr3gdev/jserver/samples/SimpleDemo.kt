@@ -19,7 +19,7 @@ fun main() {
                             "</body>" +
                             "</html>"))
             .post("/test", RouteListener().process { req, route ->
-                val msg = req.params()["message"]
+                val msg = req.params("message")
                 route.status = HttpStatus.OK
                 route.contentType = "text/html"
                 route.content = ("<!DOCTYPE HTML>" +

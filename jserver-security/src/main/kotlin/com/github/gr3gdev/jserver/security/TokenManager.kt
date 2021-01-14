@@ -62,7 +62,7 @@ object TokenManager {
      */
     fun getTokenFromHeader(req: Request): String? {
         // Token in Authorization
-        val token = req.headers()[AUTH]?.substring("Bearer ".length)
+        val token = req.headers(AUTH)?.substring("Bearer ".length)
         Logger.debug("TOKEN: $token")
         return token
     }
@@ -73,7 +73,7 @@ object TokenManager {
     fun getTokenFromCookie(req: Request, cookieName: String): String? {
         var token: String? = null
         // Token in cookie
-        val cookies = req.headers()[COOKIES]?.split(" ")
+        val cookies = req.headers(COOKIES)?.split(" ")
         val tokenCookie = cookies?.filter { it.startsWith("$cookieName=") }
         if (tokenCookie != null && tokenCookie.isNotEmpty()) {
             token = tokenCookie[0].split("=")[1]

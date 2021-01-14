@@ -16,8 +16,8 @@ object LoginRoute {
     fun get() = RouteListener(HttpStatus.OK, ResponseData.File("/pages/login.html", "text/html"))
 
     fun post(tokenManager: TokenManager) = RouteListener().process { request, responseData ->
-        val username = request.params()["username"]
-        val password = request.params()["password"]
+        val username = request.params("username")
+        val password = request.params("password")
         if (username == user.username && bCryptPasswordManager.matches(password!!, user.password)) {
             Logger.debug("User authenticated")
             val token = tokenManager.createToken(user, 60 * 60 * 1000)

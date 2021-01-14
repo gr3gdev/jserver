@@ -1,18 +1,20 @@
 package com.github.gr3gdev.jserver.http.impl
 
+import com.github.gr3gdev.jserver.http.RemoteAddress
+import com.github.gr3gdev.jserver.http.Request
 import com.github.gr3gdev.jserver.http.impl.ReaderUtil.loadHeaders
 import com.github.gr3gdev.jserver.http.impl.ReaderUtil.loadParameters
-import com.github.gr3gdev.jserver.http.Request
 import java.io.BufferedReader
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * @author Gregory Tardivel
  */
-class RequestImpl(reader: BufferedReader) : Request {
+class RequestImpl(private val remoteAddress: String, reader: BufferedReader) : Request {
 
-    private val headers: Map<String, String>
-    private val parameters: Map<String, String>
+    private val headers = HashMap<String, String?>()
+    private val parameters = HashMap<String, String?>()
     private var httpMethod = ""
     private var path = ""
     private var protocol = ""
@@ -29,12 +31,32 @@ class RequestImpl(reader: BufferedReader) : Request {
         return protocol
     }
 
-    override fun headers(): Map<String, String> {
-        return headers
+    override fun headers(key: String): String? {
+        return headers[key]
     }
 
-    override fun params(): Map<String, String> {
-        return parameters
+    override fun headers(key: String, value: String?) {
+        headers[key] = value
+    }
+
+    override fun headersNames(): MutableSet<String> {
+        return headers.keys
+    }
+
+    override fun params(key: String): String? {
+        return parameters[key]
+    }
+
+    override fun params(key: String, value: String?) {
+        parameters[key] = value
+    }
+
+    override fun paramsNames(): MutableSet<String> {
+        return parameters.keys
+    }
+
+    override fun remoteAddress(): RemoteAddress {
+        return RemoteAddressImpl(remoteAddress)
     }
 
     override fun toString(): String {
@@ -59,13 +81,13 @@ class RequestImpl(reader: BufferedReader) : Request {
             }
         }
         // HEADERS
-        headers = loadHeaders(reader)
+        loadHeaders(this, reader)
         // HTTP PARAMETERS
         var pathParameters: String? = null
         if (path.contains("?")) {
             pathParameters = path.substring(path.indexOf("?") + 1)
             path = path.substring(0, path.indexOf("?"))
         }
-        parameters = loadParameters(pathParameters, reader)
+        loadParameters(this, pathParameters, reader)
     }
 }

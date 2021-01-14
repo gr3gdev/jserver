@@ -1,5 +1,6 @@
 package com.github.gr3gdev.jserver.socket
 
+import com.github.gr3gdev.jserver.http.RemoteAddress
 import com.github.gr3gdev.jserver.http.Request
 import com.github.gr3gdev.jserver.http.RequestMethod
 import com.github.gr3gdev.jserver.route.RouteListener
@@ -10,7 +11,7 @@ import org.junit.Test
 class SocketEventTest {
 
     internal class TestRequest(private val path: String, private val method: RequestMethod) : Request {
-        private val parameters = HashMap<String, String>()
+        private val parameters = HashMap<String, String?>()
         override fun path(): String {
             return path
         }
@@ -23,13 +24,34 @@ class SocketEventTest {
             TODO("Not yet implemented")
         }
 
-        override fun headers(): Map<String, String> {
+        override fun headers(key: String): String? {
             TODO("Not yet implemented")
         }
 
-        override fun params(): Map<String, String> {
-            return parameters
+        override fun headers(key: String, value: String?) {
+            TODO("Not yet implemented")
         }
+
+        override fun headersNames(): MutableSet<String> {
+            TODO("Not yet implemented")
+        }
+
+        override fun params(key: String): String? {
+            return parameters[key]
+        }
+
+        override fun params(key: String, value: String?) {
+            parameters[key] = value
+        }
+
+        override fun paramsNames(): MutableSet<String> {
+            return parameters.keys
+        }
+
+        override fun remoteAddress(): RemoteAddress {
+            TODO("Not yet implemented")
+        }
+
     }
 
     @Test
@@ -62,8 +84,8 @@ class SocketEventTest {
         val socket = SocketEvent("/api/users/{userId}/groups/{groupId}", RequestMethod.GET, RouteListener())
         val req = TestRequest("/api/users/101/groups/8", RequestMethod.GET)
         assertTrue("Request not match", socket.match(req))
-        assertEquals("Request parameters not found", 2, req.params().size)
-        assertEquals("Invalid parameter value for userId", "101", req.params()["userId"])
-        assertEquals("Invalid parameter value for groupId", "8", req.params()["groupId"])
+        assertEquals("Request parameters not found", 2, req.paramsNames().size)
+        assertEquals("Invalid parameter value for userId", "101", req.params("userId"))
+        assertEquals("Invalid parameter value for groupId", "8", req.params("groupId"))
     }
 }

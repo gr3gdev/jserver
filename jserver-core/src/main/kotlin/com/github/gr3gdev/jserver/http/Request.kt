@@ -29,16 +29,47 @@ interface Request {
     fun protocol(): String
 
     /**
-     * HTTP Request Headers.
+     * Get HTTP Request Headers.
      *
      * @return headers
      */
-    fun headers(): Map<String, String>
+    fun headers(key: String): String?
 
     /**
-     * HTTP Request Parameters.
+     * Put HTTP Request Headers.
+     *
+     * @return headers
+     */
+    fun headers(key: String, value: String?)
+
+    /**
+     * Get HTTP Request Headers names.
+     */
+    fun headersNames(): MutableSet<String>
+
+    /**
+     * Get HTTP Request Parameters.
      *
      * @return params
      */
-    fun params(): Map<String, String>
+    fun params(key: String): String?
+
+    /**
+     * Put HTTP Request Parameters.
+     *
+     * @return params
+     */
+    fun params(key: String, value: String?)
+
+    /**
+     * Get HTTP Request Parameters names.
+     */
+    fun paramsNames(): MutableSet<String>
+
+    /**
+     * Client remote address.
+     *
+     * @return remoteAddress
+     */
+    fun remoteAddress(): RemoteAddress
 }
