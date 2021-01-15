@@ -1,4 +1,6 @@
 # jserver
+![Gradle tests](https://github.com/gr3gdev/jserver/workflows/Gradle%20tests/badge.svg) ![Gradle Publish](https://github.com/gr3gdev/jserver/workflows/Gradle%20Publish/badge.svg)
+
 Java Light Server
 
 Default port : 9000
