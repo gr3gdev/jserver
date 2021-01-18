@@ -13,8 +13,8 @@ import kotlin.collections.HashMap
  */
 class RequestImpl(private val remoteAddress: String, reader: BufferedReader) : Request {
 
-    private val headers = HashMap<String, String?>()
-    private val parameters = HashMap<String, String?>()
+    private val headers = HashMap<String, String>()
+    private val parameters = HashMap<String, String>()
     private var httpMethod = ""
     private var path = ""
     private var protocol = ""
@@ -31,11 +31,11 @@ class RequestImpl(private val remoteAddress: String, reader: BufferedReader) : R
         return protocol
     }
 
-    override fun headers(key: String): String? {
-        return headers[key]
+    override fun headers(key: String): Optional<String> {
+        return Optional.ofNullable(headers[key])
     }
 
-    override fun headers(key: String, value: String?) {
+    override fun headers(key: String, value: String) {
         headers[key] = value
     }
 
@@ -43,11 +43,11 @@ class RequestImpl(private val remoteAddress: String, reader: BufferedReader) : R
         return headers.keys
     }
 
-    override fun params(key: String): String? {
-        return parameters[key]
+    override fun params(key: String): Optional<String> {
+        return Optional.ofNullable(parameters[key])
     }
 
-    override fun params(key: String, value: String?) {
+    override fun params(key: String, value: String) {
         parameters[key] = value
     }
 

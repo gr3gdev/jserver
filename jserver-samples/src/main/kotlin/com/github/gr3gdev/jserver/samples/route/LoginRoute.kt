@@ -16,18 +16,26 @@ object LoginRoute {
     fun get() = RouteListener(HttpStatus.OK, ResponseData.File("/pages/login.html", "text/html"))
 
     fun post(tokenManager: TokenManager) = RouteListener().process { request, responseData ->
-        val username = request.params("username")
-        val password = request.params("password")
-        if (username == user.username && bCryptPasswordManager.matches(password!!, user.password)) {
-            Logger.debug("User authenticated")
-            val token = tokenManager.createToken(user, 60 * 60 * 1000)
-            responseData.cookies["MY_AUTH_COOKIE"] = token
-            responseData.cookies["TEST"] = "OK"
-            responseData.redirect = "/secure"
-        } else {
-            Logger.error("User or password incorrect")
+        request.params("username").ifPresentOrElse({ username ->
+            request.params("password").ifPresentOrElse({ password ->
+                if (username == user.username && bCryptPasswordManager.matches(password!!, user.password)) {
+                    Logger.debug("User authenticated")
+                    val token = tokenManager.createToken(user, 60 * 60 * 1000)
+                    responseData.cookies["MY_AUTH_COOKIE"] = token
+                    responseData.cookies["TEST"] = "OK"
+                    responseData.redirect = "/secure"
+                } else {
+                    Logger.error("User or password incorrect")
+                    responseData.redirect = "/login"
+                }
+            }, {
+                Logger.error("Password is empty")
+                responseData.redirect = "/login"
+            })
+        }, {
+            Logger.error("Username is empty")
             responseData.redirect = "/login"
-        }
+        })
     }
 
 }

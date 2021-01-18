@@ -37,27 +37,35 @@ internal object ReaderUtil {
             payload.append(pathParameters)
         }
         if (payload.isNotEmpty()) {
-            if (contentType == null) {
+            contentType.ifPresentOrElse({
+                if (it == "application/json") {
+                    request.params("body", payload.toString())
+                }
+                if (it == "application/x-www-form-urlencoded") {
+                    extractParameters(payload, request)
+                }
+            }, {
                 Logger.warn("No Content-Type found")
+            })
+            if (pathParameters != null) {
+                extractParameters(payload, request)
             }
             if (payload.toString().contains("Content-Disposition: form-data;")) {
                 Logger.error("multipart/form-data is not implemented !")
             }
-            if (contentType == "application/json") {
-                request.params("body", payload.toString())
-            }
-            if (contentType == "application/x-www-form-urlencoded" || pathParameters != null) {
-                val pTokens = StringTokenizer(payload.toString(), "&")
-                while (pTokens.hasMoreTokens()) {
-                    val vTokens = StringTokenizer(
-                            pTokens.nextToken(), "=")
-                    var key: String
-                    if (vTokens.hasMoreTokens()) {
-                        key = vTokens.nextToken()
-                        if (vTokens.hasMoreTokens()) {
-                            request.params(key, vTokens.nextToken())
-                        }
-                    }
+        }
+    }
+
+    private fun extractParameters(payload: StringBuilder, request: Request) {
+        val pTokens = StringTokenizer(payload.toString(), "&")
+        while (pTokens.hasMoreTokens()) {
+            val vTokens = StringTokenizer(
+                    pTokens.nextToken(), "=")
+            var key: String
+            if (vTokens.hasMoreTokens()) {
+                key = vTokens.nextToken()
+                if (vTokens.hasMoreTokens()) {
+                    request.params(key, vTokens.nextToken())
                 }
             }
         }

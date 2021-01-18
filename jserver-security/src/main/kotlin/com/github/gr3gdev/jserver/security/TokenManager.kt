@@ -60,29 +60,37 @@ object TokenManager {
     /**
      * Get JWT token from Authorization header.
      */
-    fun getTokenFromHeader(req: Request): String? {
+    fun getTokenFromHeader(req: Request): Optional<String> {
         // Token in Authorization
-        val token = req.headers(AUTH)?.substring("Bearer ".length)
-        Logger.debug("TOKEN: $token")
-        return token
+        var token: String? = null
+        req.headers(AUTH).ifPresent {
+            token = it.substring("Bearer ".length)
+            Logger.debug("TOKEN: $token")
+        }
+        return Optional.ofNullable(token)
     }
 
     /**
      * Get JWT token from Cookie.
      */
-    fun getTokenFromCookie(req: Request, cookieName: String): String? {
+    fun getTokenFromCookie(req: Request, cookieName: String): Optional<String> {
         var token: String? = null
         // Token in cookie
-        val cookies = req.headers(COOKIES)?.split(" ")
-        val tokenCookie = cookies?.filter { it.startsWith("$cookieName=") }
-        if (tokenCookie != null && tokenCookie.isNotEmpty()) {
-            token = tokenCookie[0].split("=")[1]
-            if (token.endsWith(";")) {
-                token = token.substring(0, token.length - 1)
+        req.headers(COOKIES).ifPresent { ch ->
+            val cookies = ch.split(" ")
+            val tokenCookie = cookies.filter { c -> c.startsWith("$cookieName=") }
+            if (tokenCookie.isNotEmpty()) {
+                Optional.ofNullable(tokenCookie[0].split("=")[1]).ifPresent {
+                    token = if (it.endsWith(";")) {
+                        it.substring(0, it.length - 1)
+                    } else {
+                        it
+                    }
+                }
             }
+            Logger.debug("TOKEN: $token")
         }
-        Logger.debug("TOKEN: $token")
-        return token
+        return Optional.ofNullable(token)
     }
 
     /**
@@ -113,7 +121,7 @@ object TokenManager {
     /**
      * Get user data from JWT token.
      */
-    fun <T : UserData> getUserData(token: String?, clazz: Class<T>): T? {
+    fun <T : UserData> getUserData(token: String?, clazz: Class<T>): Optional<T> {
         return if (token != null) {
             val claims = try {
                 Jwts.parser().setSigningKey(secret).parseClaimsJws(token)
@@ -122,12 +130,12 @@ object TokenManager {
                 null
             }
             if (claims?.body?.subject != null) {
-                mapper.readValue(claims.body.subject, clazz)
+                Optional.of(mapper.readValue(claims.body.subject, clazz))
             } else {
-                null
+                Optional.empty<T>()
             }
         } else {
-            null
+            Optional.empty<T>()
         }
     }
 

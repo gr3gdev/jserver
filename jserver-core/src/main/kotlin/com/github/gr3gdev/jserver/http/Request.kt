@@ -1,5 +1,7 @@
 package com.github.gr3gdev.jserver.http
 
+import java.util.*
+
 /**
  * Interface for requests.
  *
@@ -33,14 +35,14 @@ interface Request {
      *
      * @return headers
      */
-    fun headers(key: String): String?
+    fun headers(key: String): Optional<String>
 
     /**
      * Put HTTP Request Headers.
      *
      * @return headers
      */
-    fun headers(key: String, value: String?)
+    fun headers(key: String, value: String)
 
     /**
      * Get HTTP Request Headers names.
@@ -52,14 +54,14 @@ interface Request {
      *
      * @return params
      */
-    fun params(key: String): String?
+    fun params(key: String): Optional<String>
 
     /**
      * Put HTTP Request Parameters.
      *
      * @return params
      */
-    fun params(key: String, value: String?)
+    fun params(key: String, value: String)
 
     /**
      * Get HTTP Request Parameters names.

@@ -14,6 +14,10 @@ tasks {
             from("build/resources/main")
             into("build/classes/kotlin/main")
         }
+        doLast {
+            val propertyFile = file("$projectDir/src/main/resources/version.properties")
+            propertyFile.writeText("version=${rootProject.version}")
+        }
     }
 }
 

@@ -6,12 +6,14 @@ import com.github.gr3gdev.jserver.http.RequestMethod
 import com.github.gr3gdev.jserver.route.RouteListener
 import org.junit.Assert.*
 import org.junit.Test
+import java.util.*
+import kotlin.collections.HashMap
 
 
 class SocketEventTest {
 
     internal class TestRequest(private val path: String, private val method: RequestMethod) : Request {
-        private val parameters = HashMap<String, String?>()
+        private val parameters = HashMap<String, String>()
         override fun path(): String {
             return path
         }
@@ -24,11 +26,11 @@ class SocketEventTest {
             TODO("Not yet implemented")
         }
 
-        override fun headers(key: String): String? {
+        override fun headers(key: String): Optional<String> {
             TODO("Not yet implemented")
         }
 
-        override fun headers(key: String, value: String?) {
+        override fun headers(key: String, value: String) {
             TODO("Not yet implemented")
         }
 
@@ -36,11 +38,11 @@ class SocketEventTest {
             TODO("Not yet implemented")
         }
 
-        override fun params(key: String): String? {
-            return parameters[key]
+        override fun params(key: String): Optional<String> {
+            return Optional.ofNullable(parameters[key])
         }
 
-        override fun params(key: String, value: String?) {
+        override fun params(key: String, value: String) {
             parameters[key] = value
         }
 
@@ -85,7 +87,12 @@ class SocketEventTest {
         val req = TestRequest("/api/users/101/groups/8", RequestMethod.GET)
         assertTrue("Request not match", socket.match(req))
         assertEquals("Request parameters not found", 2, req.paramsNames().size)
-        assertEquals("Invalid parameter value for userId", "101", req.params("userId"))
-        assertEquals("Invalid parameter value for groupId", "8", req.params("groupId"))
+        assertTrue(req.params("userId").isPresent)
+        req.params("userId").ifPresent {
+            assertEquals("Invalid parameter value for userId", "101", it)
+        }
+        req.params("groupId").ifPresent {
+            assertEquals("Invalid parameter value for groupId", "8", it)
+        }
     }
 }

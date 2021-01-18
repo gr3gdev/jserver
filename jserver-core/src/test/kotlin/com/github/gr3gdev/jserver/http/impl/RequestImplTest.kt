@@ -1,11 +1,20 @@
 package com.github.gr3gdev.jserver.http.impl
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.util.*
 
 class RequestImplTest {
+
+    private fun validate(key: Optional<String>, value: String) {
+        assertTrue(key.isPresent)
+        key.ifPresent {
+            assertEquals(value, it)
+        }
+    }
 
     @Test
     fun `Test get request`() {
@@ -13,13 +22,13 @@ class RequestImplTest {
             val req = RequestImpl("", it)
             assertEquals("/test", req.path())
             assertEquals(4, req.headersNames().size)
-            assertEquals("Mozilla/4.0", req.headers("User-Agent"))
-            assertEquals("www.example.com", req.headers("Host"))
-            assertEquals("en, fr", req.headers("Accept-Language"))
-            assertEquals("Keep-Alive", req.headers("Connection"))
+            validate(req.headers("User-Agent"), "Mozilla/4.0")
+            validate(req.headers("Host"), "www.example.com")
+            validate(req.headers("Accept-Language"), "en, fr")
+            validate(req.headers("Connection"), "Keep-Alive")
             assertEquals(2, req.paramsNames().size)
-            assertEquals("1", req.params("param1"))
-            assertEquals("why", req.params("param2"))
+            validate(req.params("param1"), "1")
+            validate(req.params("param2"), "why")
         }
     }
 
@@ -29,16 +38,16 @@ class RequestImplTest {
             val req = RequestImpl("", it)
             assertEquals("/login", req.path())
             assertEquals(7, req.headersNames().size)
-            assertEquals("Mozilla/4.0", req.headers("User-Agent"))
-            assertEquals("www.example.com", req.headers("Host"))
-            assertEquals("en, fr", req.headers("Accept-Language"))
-            assertEquals("Keep-Alive", req.headers("Connection"))
-            assertEquals("application/x-www-form-urlencoded", req.headers("Content-Type"))
-            assertEquals("length", req.headers("Content-Length"))
-            assertEquals("gzip, deflate", req.headers("Accept-Encoding"))
+            validate(req.headers("User-Agent"), "Mozilla/4.0")
+            validate(req.headers("Host"), "www.example.com")
+            validate(req.headers("Accept-Language"), "en, fr")
+            validate(req.headers("Connection"), "Keep-Alive")
+            validate(req.headers("Content-Type"), "application/x-www-form-urlencoded")
+            validate(req.headers("Content-Length"), "length")
+            validate(req.headers("Accept-Encoding"), "gzip, deflate")
             assertEquals(2, req.paramsNames().size)
-            assertEquals("person", req.params("username"))
-            assertEquals("secret", req.params("password"))
+            validate(req.params("username"), "person")
+            validate(req.params("password"), "secret")
         }
     }
 

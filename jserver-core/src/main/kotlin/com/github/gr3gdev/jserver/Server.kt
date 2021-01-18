@@ -9,6 +9,7 @@ import com.github.gr3gdev.jserver.socket.SocketEvent
 import com.github.gr3gdev.jserver.socket.SocketReader
 import java.io.IOException
 import java.net.ServerSocket
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 /**
@@ -82,6 +83,9 @@ class Server {
     }
 
     init {
+        val bannerTxt = javaClass.getResourceAsStream("/banner.txt").readAllBytes()
+        val properties = Properties()
+        properties.load(javaClass.getResourceAsStream("/version.properties"))
         runnable = Runnable {
             if (serverSocket == null) {
                 try {
@@ -90,7 +94,8 @@ class Server {
                     Logger.error("Server error", exc)
                 }
             }
-            Logger.info("Server started on port: $port")
+            println(String(bannerTxt, StandardCharsets.UTF_8))
+            Logger.info("jServer (${properties["version"]}) started on port $port")
             while (active) {
                 try {
                     val socket = serverSocket!!.accept()
