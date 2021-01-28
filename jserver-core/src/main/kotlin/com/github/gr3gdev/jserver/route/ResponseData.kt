@@ -1,6 +1,7 @@
 package com.github.gr3gdev.jserver.route
 
 import com.github.gr3gdev.jserver.logger.Logger
+import java.io.IOException
 
 /**
  * ResponseData.
@@ -19,6 +20,7 @@ class ResponseData {
     /**
      * Response from file.
      */
+    @Throws(IOException::class)
     fun file(file: File) {
         Logger.debug("Load content from $file")
         contentType = file.contentType

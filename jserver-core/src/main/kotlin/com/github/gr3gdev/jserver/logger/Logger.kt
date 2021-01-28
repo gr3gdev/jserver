@@ -3,6 +3,11 @@ package com.github.gr3gdev.jserver.logger
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * Logger
+ *
+ * @author Gregory Tardivel
+ */
 object Logger {
 
     private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")

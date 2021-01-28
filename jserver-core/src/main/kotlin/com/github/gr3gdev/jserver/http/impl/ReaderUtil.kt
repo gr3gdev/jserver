@@ -38,7 +38,7 @@ internal object ReaderUtil {
         }
         if (payload.isNotEmpty()) {
             contentType.ifPresentOrElse({
-                if (it == "application/json") {
+                if (it.startsWith("application/json")) {
                     request.params("body", payload.toString())
                 }
                 if (it == "application/x-www-form-urlencoded") {

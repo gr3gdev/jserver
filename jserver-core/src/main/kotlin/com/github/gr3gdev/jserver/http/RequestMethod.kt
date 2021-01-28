@@ -6,5 +6,5 @@ package com.github.gr3gdev.jserver.http
  * @author Gregory Tardivel
  */
 enum class RequestMethod {
-    DELETE, GET, OPTIONS, POST, PUT
+    DELETE, GET, OPTIONS, PATCH, POST, PUT
 }

@@ -10,7 +10,7 @@ import java.util.regex.Pattern
  *
  * @author Gregory Tardivel
  */
-internal class SocketEvent(path: String, val method: RequestMethod, val routeListener: RouteListener) {
+internal class SocketEvent(path: String, private val method: RequestMethod, val routeListener: RouteListener) {
 
     private val pathParameters = HashMap<Int, String>()
     private var patternPath = path.replace("/", "\\/")

@@ -6,12 +6,10 @@ import java.io.OutputStream
 /**
  * @author Gregory Tardivel
  */
-class ResponseImpl(pOutputStream: OutputStream) : Response {
-
-    private val output = pOutputStream
+class ResponseImpl(private val pOutputStream: OutputStream) : Response {
 
     override fun output(): OutputStream {
-        return output
+        return pOutputStream
     }
 
 }

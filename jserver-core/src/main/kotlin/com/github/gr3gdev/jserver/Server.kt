@@ -80,6 +80,28 @@ class Server {
     }
 
     /**
+     * Process a DELETE Request.
+     *
+     * @param pPath          Path URL
+     * @param pRouteListener Route listener
+     * @return Server
+     */
+    fun delete(pPath: String, pRouteListener: RouteListener): Server {
+        return process(pPath, RequestMethod.DELETE, pRouteListener)
+    }
+
+    /**
+     * Process a PATCH Request.
+     *
+     * @param pPath          Path URL
+     * @param pRouteListener Route listener
+     * @return Server
+     */
+    fun patch(pPath: String, pRouteListener: RouteListener): Server {
+        return process(pPath, RequestMethod.PATCH, pRouteListener)
+    }
+
+    /**
      * Process a Request.
      *
      * @param pPath          Path URL
@@ -108,8 +130,7 @@ class Server {
             Logger.info("jServer (${properties["version"]}) started on port $port")
             while (active) {
                 try {
-                    val socket = serverSocket!!.accept()
-                    Thread(SocketReader(socket, socketEvents), "jServer SocketReader").start()
+                    Thread(SocketReader(serverSocket!!.accept(), socketEvents), "jServer SocketReader").start()
                 } catch (exc: IOException) {
                     Logger.error("Server socket error", exc)
                 }
