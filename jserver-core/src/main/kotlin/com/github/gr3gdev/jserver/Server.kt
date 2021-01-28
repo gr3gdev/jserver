@@ -54,8 +54,7 @@ class Server {
      * @return Server
      */
     fun get(pPath: String, pRouteListener: RouteListener): Server {
-        process(pPath, RequestMethod.GET, pRouteListener)
-        return this
+        return process(pPath, RequestMethod.GET, pRouteListener)
     }
 
     /**
@@ -66,8 +65,18 @@ class Server {
      * @return Server
      */
     fun post(pPath: String, pRouteListener: RouteListener): Server {
-        process(pPath, RequestMethod.POST, pRouteListener)
-        return this
+        return process(pPath, RequestMethod.POST, pRouteListener)
+    }
+
+    /**
+     * Process a PUT Request.
+     *
+     * @param pPath          Path URL
+     * @param pRouteListener Route listener
+     * @return Server
+     */
+    fun put(pPath: String, pRouteListener: RouteListener): Server {
+        return process(pPath, RequestMethod.PUT, pRouteListener)
     }
 
     /**
@@ -78,8 +87,9 @@ class Server {
      * @param pRouteListener Route listener
      * @return Server
      */
-    fun process(pPath: String, pRequestMethod: RequestMethod, pRouteListener: RouteListener) {
+    fun process(pPath: String, pRequestMethod: RequestMethod, pRouteListener: RouteListener): Server {
         socketEvents.add(SocketEvent(pPath, pRequestMethod, pRouteListener))
+        return this
     }
 
     init {
