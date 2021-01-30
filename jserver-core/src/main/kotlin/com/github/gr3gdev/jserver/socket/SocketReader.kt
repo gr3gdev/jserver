@@ -15,19 +15,18 @@ import java.net.Socket
 internal class SocketReader(private val socket: Socket, private val socketEvents: List<SocketEvent>) : Runnable {
 
     override fun run() {
-        socket.getInputStream().use { input ->
-            socket.getOutputStream().use { output ->
-                // Response
-                val response = ResponseImpl(output)
-                BufferedReader(InputStreamReader(input)).use { reader ->
-                    // Request
-                    val request = RequestImpl(socket.remoteSocketAddress.toString(), reader)
-                    Logger.debug(request)
-                    // Search event
-                    socketEvents.filter { it.match(request) }
-                            .forEach { it.routeListener.handleEvent(request, response) }
-                }
-            }
+        socket.use {
+            val input = it.getInputStream()
+            val ouput = it.getOutputStream()
+            // Response
+            val response = ResponseImpl(output)
+            val reader = BufferedReader(InputStreamReader(input))
+            // Request
+            val request = RequestImpl(it.remoteSocketAddress.toString(), reader)
+            Logger.debug(request)
+            // Search event
+            socketEvents.filter { it.match(request) }
+                    .forEach { it.routeListener.handleEvent(request, response) }
         }
     }
 
