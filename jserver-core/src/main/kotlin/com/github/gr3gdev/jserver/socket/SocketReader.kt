@@ -17,7 +17,7 @@ internal class SocketReader(private val socket: Socket, private val socketEvents
     override fun run() {
         socket.use {
             val input = it.getInputStream()
-            val ouput = it.getOutputStream()
+            val output = it.getOutputStream()
             // Response
             val response = ResponseImpl(output)
             val reader = BufferedReader(InputStreamReader(input))
