@@ -45,7 +45,7 @@ object Logger {
     }
 
     fun error(msg: Any, exc: Throwable) {
-        log("$msg : ${exc.stackTrace.joinToString("\n")}", Level.ERROR)
+        log("$msg\n${exc.message}\n\t${exc.stackTrace.joinToString("\n\t")}", Level.ERROR)
     }
 
 }

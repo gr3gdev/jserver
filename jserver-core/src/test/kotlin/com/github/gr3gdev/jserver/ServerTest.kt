@@ -1,6 +1,7 @@
 package com.github.gr3gdev.jserver
 
 import com.github.gr3gdev.jserver.route.HttpStatus
+import com.github.gr3gdev.jserver.route.ResponseData
 import com.github.gr3gdev.jserver.route.RouteListener
 import org.junit.Ignore
 import org.junit.Test
@@ -15,7 +16,8 @@ class ServerTest {
         val max = 100
         val server = Server().port(8080)
         val rand = SecureRandom()
-        server.get("/test", RouteListener().process { req, res ->
+        server.get("/test", RouteListener().process { req ->
+            val res = ResponseData()
             req.params("message").ifPresent {
                 val content = ByteArray(100000)
                 rand.nextBytes(content)
@@ -25,6 +27,7 @@ class ServerTest {
                     server.stop()
                 }
             }
+            res
         }).start()
         if (server.isAlive()) {
             IntStream.rangeClosed(1, max).forEach {

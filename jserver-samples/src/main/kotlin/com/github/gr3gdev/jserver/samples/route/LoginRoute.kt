@@ -15,7 +15,8 @@ object LoginRoute {
 
     fun get() = RouteListener(HttpStatus.OK, ResponseData.File("/pages/login.html", "text/html"))
 
-    fun post(tokenManager: TokenManager) = RouteListener().process { request, responseData ->
+    fun post(tokenManager: TokenManager) = RouteListener().process { request ->
+        val responseData = ResponseData()
         request.params("username").ifPresentOrElse({ username ->
             request.params("password").ifPresentOrElse({ password ->
                 if (username == user.username && bCryptPasswordManager.matches(password!!, user.password)) {
@@ -36,6 +37,7 @@ object LoginRoute {
             Logger.error("Username is empty")
             responseData.redirect = "/login"
         })
+        responseData
     }
 
 }

@@ -9,19 +9,18 @@ import com.github.gr3gdev.jserver.security.TokenManager
 
 object SecureRoute {
 
-    fun get(tokenExtractor: TokenManager) = RouteListener().process { request, responseData ->
-        tokenExtractor.getTokenFromCookie(request, "MY_AUTH_COOKIE").ifPresentOrElse({ token ->
-            tokenExtractor.getUserData(token, User::class.java).ifPresentOrElse({ userToken ->
+    fun get(tokenExtractor: TokenManager) = RouteListener().process { request ->
+        tokenExtractor.getTokenFromCookie(request, "MY_AUTH_COOKIE", { token ->
+            tokenExtractor.getUserData(token, User::class.java, {userToken ->
                 Logger.debug("User: $userToken")
-                responseData.status = HttpStatus.OK
-                responseData.file(ResponseData.File("/pages/secure.html", "text/html"))
+                ResponseData(HttpStatus.OK, ResponseData.File("/pages/secure.html", "text/html"))
             }, {
                 Logger.error("Authentication invalid")
-                responseData.redirect = "/login"
+                ResponseData("/login")
             })
         }, {
             Logger.error("Authentication not found")
-            responseData.redirect = "/login"
+            ResponseData("/login")
         })
     }
 

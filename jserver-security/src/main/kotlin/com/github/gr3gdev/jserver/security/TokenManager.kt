@@ -62,35 +62,39 @@ object TokenManager {
      */
     fun getTokenFromHeader(req: Request): Optional<String> {
         // Token in Authorization
-        var token: String? = null
-        req.headers(AUTH).ifPresent {
-            token = it.substring("Bearer ".length)
-            Logger.debug("TOKEN: $token")
-        }
-        return Optional.ofNullable(token)
+        return req.headers(AUTH, {
+            if (it.startsWith("Bearer", true)) {
+                Optional.of(it.substring("Bearer ".length))
+            } else {
+                Optional.empty()
+            }
+        }, {
+            Optional.empty()
+        })
     }
 
     /**
      * Get JWT token from Cookie.
      */
-    fun getTokenFromCookie(req: Request, cookieName: String): Optional<String> {
-        var token: String? = null
+    fun <T> getTokenFromCookie(req: Request, cookieName: String, ifPresent: (token: String) -> T, orElse: () -> T): T {
         // Token in cookie
-        req.headers(COOKIES).ifPresent { ch ->
+        return req.headers(COOKIES, { ch ->
             val cookies = ch.split(" ")
-            val tokenCookie = cookies.filter { c -> c.startsWith("$cookieName=") }
-            if (tokenCookie.isNotEmpty()) {
-                Optional.ofNullable(tokenCookie[0].split("=")[1]).ifPresent {
-                    token = if (it.endsWith(";")) {
-                        it.substring(0, it.length - 1)
-                    } else {
-                        it
-                    }
+            val tokenCookie = cookies.find { c -> c.startsWith("$cookieName=") }.orEmpty()
+            if (tokenCookie.isNotEmpty() && tokenCookie.contains("=")) {
+                val tokenValue = tokenCookie.split("=")[1]
+                val token = if (tokenValue.endsWith(";")) {
+                    tokenValue.substring(0, tokenValue.length - 1)
+                } else {
+                    tokenValue
                 }
+                ifPresent(token)
+            } else {
+                orElse()
             }
-            Logger.debug("TOKEN: $token")
-        }
-        return Optional.ofNullable(token)
+        }, {
+            orElse()
+        })
     }
 
     /**
@@ -121,21 +125,18 @@ object TokenManager {
     /**
      * Get user data from JWT token.
      */
-    fun <T : UserData> getUserData(token: String?, clazz: Class<T>): Optional<T> {
+    fun <T : UserData, R> getUserData(token: String?, clazz: Class<T>, ifPresent: (data: T) -> R, orElse: () -> R): R {
         return if (token != null) {
-            val claims = try {
-                Jwts.parser().setSigningKey(secret).parseClaimsJws(token)
+            try {
+                val claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token)
+                val data = mapper.readValue(claims.body.subject, clazz)
+                ifPresent(data)
             } catch (exc: Exception) {
-                Logger.error("${exc.message}\n${exc.stackTrace.joinToString("\n")}")
-                null
-            }
-            if (claims?.body?.subject != null) {
-                Optional.of(mapper.readValue(claims.body.subject, clazz))
-            } else {
-                Optional.empty<T>()
+                Logger.error("JWT UserData error", exc)
+                orElse()
             }
         } else {
-            Optional.empty<T>()
+            orElse()
         }
     }
 

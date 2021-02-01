@@ -48,6 +48,9 @@ class Server {
     @Synchronized
     fun stop() {
         active = false
+        if (serverSocket != null) {
+            serverSocket!!.close()
+        }
     }
 
     @Synchronized
@@ -143,14 +146,16 @@ class Server {
             }
             println(String(bannerTxt, StandardCharsets.UTF_8))
             Logger.info("jServer (${properties["version"]}) started on port $port")
+            if (startupEvent != null) {
+                startupEvent!!()
+            }
             while (active) {
                 try {
                     Thread(SocketReader(serverSocket!!.accept(), socketEvents), "jServer SocketReader").start()
                 } catch (exc: IOException) {
-                    Logger.error("Server socket error", exc)
-                }
-                if (startupEvent != null) {
-                    startupEvent!!()
+                    if (active) {
+                        Logger.error("Server socket error", exc)
+                    }
                 }
             }
             Logger.warn("Server stopped")

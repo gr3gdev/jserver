@@ -4,6 +4,7 @@ import com.github.gr3gdev.jserver.http.RemoteAddress
 import com.github.gr3gdev.jserver.http.Request
 import com.github.gr3gdev.jserver.http.impl.ReaderUtil.loadHeaders
 import com.github.gr3gdev.jserver.http.impl.ReaderUtil.loadParameters
+import com.github.gr3gdev.jserver.logger.Logger
 import java.io.BufferedReader
 import java.util.*
 import kotlin.collections.HashMap
@@ -31,12 +32,26 @@ class RequestImpl(private val remoteAddress: String, reader: BufferedReader) : R
         return protocol
     }
 
+    private fun <T> conditional(optional: Optional<String>, ifPresent: (value: String) -> T, orElse: () -> T): T {
+        var res: T? = null
+        optional.ifPresentOrElse({
+            res = ifPresent(it)
+        }, {
+            res = orElse()
+        })
+        return res!!
+    }
+
     override fun headers(key: String): Optional<String> {
-        return Optional.ofNullable(headers[key])
+        return Optional.ofNullable(headers[key.toLowerCase()])
+    }
+
+    override fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T): T {
+        return conditional(headers(key), ifPresent, orElse)
     }
 
     override fun headers(key: String, value: String) {
-        headers[key] = value
+        headers[key.toLowerCase()] = value
     }
 
     override fun headersNames(): MutableSet<String> {
@@ -44,11 +59,15 @@ class RequestImpl(private val remoteAddress: String, reader: BufferedReader) : R
     }
 
     override fun params(key: String): Optional<String> {
-        return Optional.ofNullable(parameters[key])
+        return Optional.ofNullable(parameters[key.toLowerCase()])
+    }
+
+    override fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T): T {
+        return conditional(params(key), ifPresent, orElse)
     }
 
     override fun params(key: String, value: String) {
-        parameters[key] = value
+        parameters[key.toLowerCase()] = value
     }
 
     override fun paramsNames(): MutableSet<String> {
@@ -60,11 +79,7 @@ class RequestImpl(private val remoteAddress: String, reader: BufferedReader) : R
     }
 
     override fun toString(): String {
-        return "RequestImpl{" +
-                "httpMethod='" + httpMethod + '\'' +
-                ", path='" + path + '\'' +
-                ", protocol='" + protocol + '\'' +
-                '}'
+        return "RequestImpl{httpMethod=$httpMethod, path=$path, protocol=$protocol, parameters=$parameters, headers=$headers}"
     }
 
     init {

@@ -22,6 +22,12 @@ jobs:
         java-version: "11"
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
-
     - name: Build with Gradle
       run: gradle test
+    - name: Set up Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '12'
+    - name: Cypress tests
+      working-directory: jserver-cypress
+      run: npm run cy:run

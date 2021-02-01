@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets
 class RouteListener constructor() {
 
     var responseData = ResponseData()
-    private var run: ((Request, ResponseData) -> Unit)? = null
+    private var run: ((Request) -> ResponseData)? = null
 
     constructor(status: HttpStatus, contentType: String, content: String) : this() {
         responseData.status = status
@@ -28,7 +28,7 @@ class RouteListener constructor() {
     /**
      * Process before rendered.
      */
-    fun process(run: (Request, ResponseData) -> Unit): RouteListener {
+    fun process(run: (Request) -> ResponseData): RouteListener {
         this.run = run
         return this
     }
@@ -55,8 +55,7 @@ class RouteListener constructor() {
      */
     fun handleEvent(request: Request, response: Response) {
         if (this.run != null) {
-            this.responseData = ResponseData()
-            this.run!!(request, responseData)
+            this.responseData = this.run!!(request)
         }
         response.write(constructResponseHeader().plus(this.responseData.content))
     }

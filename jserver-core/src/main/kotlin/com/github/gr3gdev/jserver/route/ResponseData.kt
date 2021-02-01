@@ -8,7 +8,7 @@ import java.io.IOException
  *
  * @author Gregory Tardivel
  */
-class ResponseData {
+class ResponseData() {
 
     var content = ByteArray(0)
 
@@ -17,14 +17,34 @@ class ResponseData {
     var redirect: String? = null
     val cookies = HashMap<String, String>()
 
+    constructor(status: HttpStatus, contentType: String, content: ByteArray): this(status) {
+        this.contentType = contentType
+        this.content = content
+    }
+
+    constructor(redirect: String): this() {
+        this.redirect = redirect
+    }
+
+    constructor(status: HttpStatus): this() {
+        this.status = status
+    }
+
+    constructor(status: HttpStatus, file: File): this(status) {
+        this.file(file)
+    }
+
     /**
      * Response from file.
      */
-    @Throws(IOException::class)
     fun file(file: File) {
         Logger.debug("Load content from $file")
         contentType = file.contentType
-        content = javaClass.getResourceAsStream(file.path).readBytes()
+        try {
+            content = javaClass.getResourceAsStream(file.path).readBytes()
+        } catch (exc: IOException) {
+            Logger.error("Content not loaded : $file", exc)
+        }
     }
 
     class File(val path: String, val contentType: String) {

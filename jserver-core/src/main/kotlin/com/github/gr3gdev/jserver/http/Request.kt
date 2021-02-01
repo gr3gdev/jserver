@@ -38,6 +38,13 @@ interface Request {
     fun headers(key: String): Optional<String>
 
     /**
+     * Get HTTP Request Headers.
+     *
+     * @return <T>
+     */
+    fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T): T
+
+    /**
      * Put HTTP Request Headers.
      *
      * @return headers
@@ -55,6 +62,13 @@ interface Request {
      * @return params
      */
     fun params(key: String): Optional<String>
+
+    /**
+     * Get HTTP Request Parameters.
+     *
+     * @return <T>
+     */
+    fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T): T
 
     /**
      * Put HTTP Request Parameters.

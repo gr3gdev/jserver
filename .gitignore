@@ -27,3 +27,5 @@ hs_err_pid*
 .iml
 build/
 out/
+/jserver-cypress/node_modules/
+/jserver-cypress/package-lock.json
