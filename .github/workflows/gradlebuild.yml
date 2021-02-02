@@ -28,6 +28,9 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '12'
-    - name: Cypress tests
+    - name: Init jserver-cypress
+      working-directory: jserver-cypress
+      run: npm install
+    - name: Run jserver-cypress tests
       working-directory: jserver-cypress
       run: npm run cy:run
