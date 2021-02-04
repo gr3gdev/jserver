@@ -2,7 +2,6 @@ package com.github.gr3gdev.jserver.route
 
 import com.github.gr3gdev.jserver.http.RemoteAddress
 import com.github.gr3gdev.jserver.http.Request
-import com.github.gr3gdev.jserver.http.impl.ResponseImpl
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.ByteArrayOutputStream
@@ -64,14 +63,13 @@ class RouteListenerTest {
     @Test
     fun `test run`() {
         val route = RouteListener().process { _ ->
-            val res = ResponseData()
+            val res = Response()
             res.status = HttpStatus.OK
             res.content = "Test OK".toByteArray()
             res
         }
         val output = ByteArrayOutputStream()
-        val res = ResponseImpl(output)
-        route.handleEvent(req, res)
+        route.handleEvent(req, output)
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 7\r\n\r\nTest OK", String(output.toByteArray()))
     }
 

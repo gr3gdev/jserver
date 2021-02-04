@@ -3,8 +3,6 @@ package com.github.gr3gdev.jserver.http.impl
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.util.*
 
 class RequestImplTest {
@@ -18,7 +16,7 @@ class RequestImplTest {
 
     @Test
     fun `Test get request`() {
-        BufferedReader(InputStreamReader(javaClass.getResourceAsStream("/http/get.txt"))).use {
+        javaClass.getResourceAsStream("/http/get.txt").use {
             val req = RequestImpl("", it)
             assertEquals("/test", req.path())
             assertEquals(4, req.headersNames().size)
@@ -34,7 +32,7 @@ class RequestImplTest {
 
     @Test
     fun `Test post request`() {
-        BufferedReader(InputStreamReader(javaClass.getResourceAsStream("/http/post.txt"))).use {
+        javaClass.getResourceAsStream("/http/post.txt").use {
             val req = RequestImpl("", it)
             assertEquals("/login", req.path())
             assertEquals(7, req.headersNames().size)

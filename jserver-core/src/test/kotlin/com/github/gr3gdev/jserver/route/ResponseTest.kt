@@ -3,12 +3,12 @@ package com.github.gr3gdev.jserver.route
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class ResponseDataTest {
+class ResponseTest {
 
     @Test
     fun `Test read html file`() {
-        val res = ResponseData()
-        res.file(ResponseData.File("/test/page1.html", "text/html"))
+        val res = Response()
+        res.file(Response.File("/test/page1.html", "text/html"))
         assertEquals("Content type not match", "text/html", res.contentType)
         assertEquals("Content not match", """
             <!DOCTYPE HTML>
@@ -25,8 +25,8 @@ class ResponseDataTest {
 
     @Test
     fun `Test read js file`() {
-        val res = ResponseData()
-        res.file(ResponseData.File("/test/script.js", "application/javascript"))
+        val res = Response()
+        res.file(Response.File("/test/script.js", "application/javascript"))
         assertEquals("Content type not match", "application/javascript", res.contentType)
         assertEquals("Content not match", """
             function test() {

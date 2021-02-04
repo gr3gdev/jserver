@@ -1,7 +1,8 @@
 package com.github.gr3gdev.jserver.route
 
 import com.github.gr3gdev.jserver.http.Request
-import com.github.gr3gdev.jserver.http.Response
+import com.github.gr3gdev.jserver.logger.Logger
+import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 
 /**
@@ -11,39 +12,36 @@ import java.nio.charset.StandardCharsets
  */
 class RouteListener constructor() {
 
-    var responseData = ResponseData()
-    private var run: ((Request) -> ResponseData)? = null
+    private var responseData = Response()
+    private var run: ((Request) -> Response)? = null
 
-    constructor(status: HttpStatus, contentType: String, content: String) : this() {
-        responseData.status = status
-        responseData.contentType = contentType
-        responseData.content = content.toByteArray()
+    constructor(status: HttpStatus, contentType: String, content: ByteArray) : this() {
+        responseData = Response(status, contentType, content)
     }
 
-    constructor(status: HttpStatus, file: ResponseData.File) : this() {
-        responseData.status = status
-        responseData.file(file)
+    constructor(status: HttpStatus, file: Response.File) : this() {
+        responseData = Response(status, file)
     }
 
     /**
      * Process before rendered.
      */
-    fun process(run: (Request) -> ResponseData): RouteListener {
+    fun process(run: (Request) -> Response): RouteListener {
         this.run = run
         return this
     }
 
-    private fun constructResponseHeader(): ByteArray {
+    private fun constructResponseHeader(response: Response): ByteArray {
         val headers = ArrayList<String>()
-        if (responseData.redirect != null) {
-            responseData.status = HttpStatus.FOUND
-            headers.add("Location: ${responseData.redirect}")
+        if (response.redirect != null) {
+            response.status = HttpStatus.FOUND
+            headers.add("Location: ${response.redirect}")
         } else {
-            headers.add("Content-Type: ${responseData.contentType}")
-            headers.add("Content-Length: ${responseData.content.size}")
+            headers.add("Content-Type: ${response.contentType}")
+            headers.add("Content-Length: ${response.content.size}")
         }
-        responseData.cookies.forEach { (key, value) -> headers.add("Set-Cookie: $key=$value") }
-        return "HTTP/1.1 ${responseData.status.code}\r\n${headers.joinToString("\r\n")}\r\n\r\n"
+        response.cookies.forEach { (key, value) -> headers.add("Set-Cookie: $key=$value") }
+        return "HTTP/1.1 ${response.status.code}\r\n${headers.joinToString("\r\n")}\r\n\r\n"
                 .toByteArray(StandardCharsets.UTF_8)
     }
 
@@ -51,13 +49,15 @@ class RouteListener constructor() {
      * Execute RouteListener.
      *
      * @param request HTTP Request
-     * @param response HTTP Response
+     * @param output Output stream for HTTP response
      */
-    fun handleEvent(request: Request, response: Response) {
+    fun handleEvent(request: Request, output: OutputStream) {
+        var response = this.responseData
         if (this.run != null) {
-            this.responseData = this.run!!(request)
+            response = this.run!!(request)
         }
-        response.write(constructResponseHeader().plus(this.responseData.content))
+        Logger.debug("$request -- $response")
+        output.write(constructResponseHeader(response).plus(response.content))
     }
 
 }

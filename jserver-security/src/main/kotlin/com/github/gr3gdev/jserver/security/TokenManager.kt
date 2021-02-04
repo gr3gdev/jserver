@@ -60,16 +60,16 @@ object TokenManager {
     /**
      * Get JWT token from Authorization header.
      */
-    fun getTokenFromHeader(req: Request): Optional<String> {
+    fun <T> getTokenFromHeader(req: Request, ifPresent: (token: String) -> T, orElse: () -> T): T {
         // Token in Authorization
         return req.headers(AUTH, {
             if (it.startsWith("Bearer", true)) {
-                Optional.of(it.substring("Bearer ".length))
+                ifPresent(it.substring("Bearer ".length))
             } else {
-                Optional.empty()
+                orElse()
             }
         }, {
-            Optional.empty()
+            orElse()
         })
     }
 

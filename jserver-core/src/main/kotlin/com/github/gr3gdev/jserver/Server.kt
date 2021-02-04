@@ -3,12 +3,11 @@ package com.github.gr3gdev.jserver
 import com.github.gr3gdev.jserver.http.RequestMethod
 import com.github.gr3gdev.jserver.logger.Logger
 import com.github.gr3gdev.jserver.route.HttpStatus
-import com.github.gr3gdev.jserver.route.ResponseData
+import com.github.gr3gdev.jserver.route.Response
 import com.github.gr3gdev.jserver.route.RouteListener
 import com.github.gr3gdev.jserver.socket.SocketEvent
 import com.github.gr3gdev.jserver.socket.SocketReader
 import java.io.IOException
-import java.lang.RuntimeException
 import java.net.ServerSocket
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -30,7 +29,7 @@ class Server {
 
     init {
         socketEvents.add(SocketEvent("/favicon.ico", RequestMethod.GET,
-                RouteListener(HttpStatus.OK, ResponseData.File("/favicon.ico", "image/vnd.microsoft.icon"))))
+                RouteListener(HttpStatus.OK, Response.File("/favicon.ico", "image/vnd.microsoft.icon"))))
     }
 
     fun port(pPort: Int): Server {

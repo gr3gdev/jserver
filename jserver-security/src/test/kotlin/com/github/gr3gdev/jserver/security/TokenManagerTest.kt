@@ -80,7 +80,11 @@ class TokenManagerTest {
         val tokenExtractor = TokenManager.secretKey("my_secret-ForTESTS")
                 .id("jServer").issuer("GR3Gdev")
         val request = RequestTest(HashMap())
-        assertFalse(tokenExtractor.getTokenFromHeader(request).isPresent)
+        tokenExtractor.getTokenFromHeader(request, {
+            fail("Token present")
+        }, {
+            assertTrue(true)
+        })
     }
 
     @Test
@@ -88,7 +92,11 @@ class TokenManagerTest {
         val tokenExtractor = TokenManager.secretKey("my_secret-ForTESTS")
                 .id("jServer").issuer("GR3Gdev")
         val request = RequestTest(mapOf(Pair("Authorization", "Basic ABCDEFGHIJKL")))
-        assertFalse(tokenExtractor.getTokenFromHeader(request).isPresent)
+        tokenExtractor.getTokenFromHeader(request, {
+            fail("Token present")
+        }, {
+            assertTrue(true)
+        })
     }
 
     @Test
@@ -97,10 +105,11 @@ class TokenManagerTest {
                 .id("jServer").issuer("GR3Gdev")
         val token = SecureRandom().nextLong().toString()
         val request = RequestTest(mapOf(Pair("Authorization", "Bearer $token")))
-        assertTrue(tokenExtractor.getTokenFromHeader(request).isPresent)
-        tokenExtractor.getTokenFromHeader(request).ifPresent {
+        tokenExtractor.getTokenFromHeader(request, {
             assertEquals(token, it)
-        }
+        }, {
+            fail("Token missing")
+        })
     }
 
     @Test

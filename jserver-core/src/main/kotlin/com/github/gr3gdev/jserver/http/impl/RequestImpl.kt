@@ -4,15 +4,16 @@ import com.github.gr3gdev.jserver.http.RemoteAddress
 import com.github.gr3gdev.jserver.http.Request
 import com.github.gr3gdev.jserver.http.impl.ReaderUtil.loadHeaders
 import com.github.gr3gdev.jserver.http.impl.ReaderUtil.loadParameters
-import com.github.gr3gdev.jserver.logger.Logger
 import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.util.*
 import kotlin.collections.HashMap
 
 /**
  * @author Gregory Tardivel
  */
-class RequestImpl(private val remoteAddress: String, reader: BufferedReader) : Request {
+class RequestImpl(private val remoteAddress: String, input: InputStream) : Request {
 
     private val headers = HashMap<String, String>()
     private val parameters = HashMap<String, String>()
@@ -79,10 +80,11 @@ class RequestImpl(private val remoteAddress: String, reader: BufferedReader) : R
     }
 
     override fun toString(): String {
-        return "RequestImpl{httpMethod=$httpMethod, path=$path, protocol=$protocol, parameters=$parameters, headers=$headers}"
+        return "Request(httpMethod=$httpMethod, path=$path, protocol=$protocol, parameters=$parameters, headers=$headers)"
     }
 
     init {
+        val reader = BufferedReader(InputStreamReader(input))
         val requestLine = reader.readLine()
         if (requestLine != null) {
             val tokens = StringTokenizer(requestLine)

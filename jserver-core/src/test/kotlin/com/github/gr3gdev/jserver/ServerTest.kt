@@ -1,7 +1,7 @@
 package com.github.gr3gdev.jserver
 
 import com.github.gr3gdev.jserver.route.HttpStatus
-import com.github.gr3gdev.jserver.route.ResponseData
+import com.github.gr3gdev.jserver.route.Response
 import com.github.gr3gdev.jserver.route.RouteListener
 import org.junit.Ignore
 import org.junit.Test
@@ -17,7 +17,7 @@ class ServerTest {
         val server = Server().port(8080)
         val rand = SecureRandom()
         server.get("/test", RouteListener().process { req ->
-            val res = ResponseData()
+            val res = Response()
             req.params("message").ifPresent {
                 val content = ByteArray(100000)
                 rand.nextBytes(content)
