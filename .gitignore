@@ -29,3 +29,5 @@ build/
 out/
 /jserver-cypress/node_modules/
 /jserver-cypress/package-lock.json
+/jserver-cypress/cypress/videos/*
+/jserver-cypress/cypress/screenshots/*

@@ -1,4 +1,4 @@
-package com.github.gr3gdev.jserver.samples.route
+package com.github.gr3gdev.jserver.test.route
 
 import com.github.gr3gdev.jserver.Server
 import com.github.gr3gdev.jserver.route.HttpStatus
