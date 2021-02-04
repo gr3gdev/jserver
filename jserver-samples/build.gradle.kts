@@ -17,15 +17,17 @@ application {
 
 tasks {
     compileKotlin {
-        dependsOn("installFrontReact")
+        //dependsOn("installFrontReact")
         copy {
             from("build/resources/main")
             into("build/classes/kotlin/main")
         }
+        /*
         copy {
             from("front-react/build")
             into("build/classes/kotlin/main/react")
         }
+        */
     }
     register("runCypressTestServer", JavaExec::class) {
         group = "Execution"
