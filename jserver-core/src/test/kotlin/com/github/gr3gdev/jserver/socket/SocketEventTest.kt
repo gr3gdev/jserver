@@ -30,7 +30,7 @@ class SocketEventTest {
             TODO("Not yet implemented")
         }
 
-        override fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T): T {
+        override fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T) {
             TODO("Not yet implemented")
         }
 
@@ -46,7 +46,7 @@ class SocketEventTest {
             return Optional.ofNullable(parameters[key])
         }
 
-        override fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T): T {
+        override fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T) {
             TODO("Not yet implemented")
         }
 
