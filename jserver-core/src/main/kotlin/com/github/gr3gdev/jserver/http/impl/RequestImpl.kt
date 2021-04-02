@@ -47,8 +47,8 @@ class RequestImpl(private val remoteAddress: String, input: InputStream) : Reque
         return Optional.ofNullable(headers[key.toLowerCase()])
     }
 
-    override fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T): T {
-        return conditional(headers(key), ifPresent, orElse)
+    override fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T) {
+        conditional(headers(key), ifPresent, orElse)
     }
 
     override fun headers(key: String, value: String) {
@@ -63,8 +63,8 @@ class RequestImpl(private val remoteAddress: String, input: InputStream) : Reque
         return Optional.ofNullable(parameters[key.toLowerCase()])
     }
 
-    override fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T): T {
-        return conditional(params(key), ifPresent, orElse)
+    override fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T) {
+        conditional(params(key), ifPresent, orElse)
     }
 
     override fun params(key: String, value: String) {

@@ -34,14 +34,12 @@ class TokenManagerTest {
         override fun method(): String = "GET"
         override fun protocol(): String = "http"
         override fun headers(key: String): Optional<String> = Optional.ofNullable(headers[key])
-        override fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T): T {
-            var res: T? = null
+        override fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T) {
             headers(key).ifPresentOrElse({
-                res = ifPresent(it)
+                ifPresent(it)
             }, {
-                res = orElse()
+                orElse()
             })
-            return res!!
         }
 
         override fun headers(key: String, value: String) {}
@@ -53,7 +51,7 @@ class TokenManagerTest {
             TODO("Not yet implemented")
         }
 
-        override fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T): T {
+        override fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T) {
             TODO("Not yet implemented")
         }
 
@@ -145,8 +143,9 @@ class TokenManagerTest {
         val userData = UserTest("Name1", 1)
         val token = tokenExtractor.createToken(userData, 60 * 60 * 1000)
         tokenExtractor.getUserData(token, UserTest::class.java, {
-            assertEquals("Name1", it.name)
-            assertEquals(1, it.count)
+            val data = it.data
+            assertEquals("Name1", data.name)
+            assertEquals(1, data.count)
         }, {
             fail("UserData not found")
         })

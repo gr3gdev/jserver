@@ -3,6 +3,7 @@ package com.github.gr3gdev.jserver.security
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.gr3gdev.jserver.http.Request
 import com.github.gr3gdev.jserver.logger.Logger
+import com.github.gr3gdev.jserver.security.user.JwtData
 import com.github.gr3gdev.jserver.security.user.UserData
 import io.jsonwebtoken.JwtBuilder
 import io.jsonwebtoken.Jwts
@@ -60,9 +61,9 @@ object TokenManager {
     /**
      * Get JWT token from Authorization header.
      */
-    fun <T> getTokenFromHeader(req: Request, ifPresent: (token: String) -> T, orElse: () -> T): T {
+    fun <T> getTokenFromHeader(req: Request, ifPresent: (token: String) -> T, orElse: () -> T) {
         // Token in Authorization
-        return req.headers(AUTH, {
+        req.headers(AUTH, {
             if (it.startsWith("Bearer", true)) {
                 ifPresent(it.substring("Bearer ".length))
             } else {
@@ -76,9 +77,9 @@ object TokenManager {
     /**
      * Get JWT token from Cookie.
      */
-    fun <T> getTokenFromCookie(req: Request, cookieName: String, ifPresent: (token: String) -> T, orElse: () -> T): T {
+    fun <T> getTokenFromCookie(req: Request, cookieName: String, ifPresent: (token: String) -> T, orElse: () -> T) {
         // Token in cookie
-        return req.headers(COOKIES, { ch ->
+        req.headers(COOKIES, { ch ->
             val cookies = ch.split(" ")
             val tokenCookie = cookies.find { c -> c.startsWith("$cookieName=") }.orEmpty()
             if (tokenCookie.isNotEmpty() && tokenCookie.contains("=")) {
@@ -125,12 +126,11 @@ object TokenManager {
     /**
      * Get user data from JWT token.
      */
-    fun <T : UserData, R> getUserData(token: String?, clazz: Class<T>, ifPresent: (data: T) -> R, orElse: () -> R): R {
-        return if (token != null) {
+    fun <T : UserData, R> getUserData(token: String?, clazz: Class<T>, ifPresent: (data: JwtData<T>) -> R, orElse: () -> R) {
+        if (token != null) {
             try {
                 val claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token)
-                val data = mapper.readValue(claims.body.subject, clazz)
-                ifPresent(data)
+                ifPresent(JwtData(claims.body, clazz, ))
             } catch (exc: Exception) {
                 Logger.error("JWT UserData error", exc)
                 orElse()
