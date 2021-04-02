@@ -61,9 +61,9 @@ object TokenManager {
     /**
      * Get JWT token from Authorization header.
      */
-    fun <T> getTokenFromHeader(req: Request, ifPresent: (token: String) -> T, orElse: () -> T) {
+    fun <T> getTokenFromHeader(req: Request, ifPresent: (token: String) -> T, orElse: () -> T): T {
         // Token in Authorization
-        req.headers(AUTH, {
+        return req.headers(AUTH, {
             if (it.startsWith("Bearer", true)) {
                 ifPresent(it.substring("Bearer ".length))
             } else {
@@ -77,9 +77,9 @@ object TokenManager {
     /**
      * Get JWT token from Cookie.
      */
-    fun <T> getTokenFromCookie(req: Request, cookieName: String, ifPresent: (token: String) -> T, orElse: () -> T) {
+    fun <T> getTokenFromCookie(req: Request, cookieName: String, ifPresent: (token: String) -> T, orElse: () -> T): T {
         // Token in cookie
-        req.headers(COOKIES, { ch ->
+        return req.headers(COOKIES, { ch ->
             val cookies = ch.split(" ")
             val tokenCookie = cookies.find { c -> c.startsWith("$cookieName=") }.orEmpty()
             if (tokenCookie.isNotEmpty() && tokenCookie.contains("=")) {
@@ -126,8 +126,8 @@ object TokenManager {
     /**
      * Get user data from JWT token.
      */
-    fun <T : UserData, R> getUserData(token: String?, clazz: Class<T>, ifPresent: (data: JwtData<T>) -> R, orElse: () -> R) {
-        if (token != null) {
+    fun <T : UserData, R> getUserData(token: String?, clazz: Class<T>, ifPresent: (data: JwtData<T>) -> R, orElse: () -> R): R {
+        return if (token != null) {
             try {
                 val claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token)
                 ifPresent(JwtData(claims.body, clazz, ))

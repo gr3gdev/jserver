@@ -40,7 +40,7 @@ interface Request {
     /**
      * Get HTTP Request Headers.
      */
-    fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T)
+    fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T): T
 
     /**
      * Put HTTP Request Headers.
@@ -64,7 +64,7 @@ interface Request {
     /**
      * Get HTTP Request Parameters.
      */
-    fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T)
+    fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T): T
 
     /**
      * Put HTTP Request Parameters.
