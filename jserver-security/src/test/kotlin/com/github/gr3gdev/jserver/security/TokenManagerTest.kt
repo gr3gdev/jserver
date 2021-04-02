@@ -34,12 +34,14 @@ class TokenManagerTest {
         override fun method(): String = "GET"
         override fun protocol(): String = "http"
         override fun headers(key: String): Optional<String> = Optional.ofNullable(headers[key])
-        override fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T) {
+        override fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T): T {
+            var res: T? = null
             headers(key).ifPresentOrElse({
-                ifPresent(it)
+                res = ifPresent(it)
             }, {
-                orElse()
+                res = orElse()
             })
+            return res!!
         }
 
         override fun headers(key: String, value: String) {}
@@ -51,7 +53,7 @@ class TokenManagerTest {
             TODO("Not yet implemented")
         }
 
-        override fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T) {
+        override fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T): T {
             TODO("Not yet implemented")
         }
 
