@@ -32,4 +32,4 @@ jobs:
       working-directory: jserver-cypress
       run: npm install
     - name: Cypress tests
-      run: gradle dockerRun cypressRun dockerStop
+      run: gradle clean dockerRun cypressRun dockerStop
