@@ -62,7 +62,7 @@ class RouteListenerTest {
 
     @Test
     fun `test run`() {
-        val route = RouteListener().process { _ ->
+        val route = RouteListener().process {
             val res = Response()
             res.status = HttpStatus.OK
             res.content = "Test OK".toByteArray()

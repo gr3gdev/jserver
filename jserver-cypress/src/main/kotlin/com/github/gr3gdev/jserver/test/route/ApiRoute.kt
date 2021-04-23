@@ -19,8 +19,8 @@ object ApiRoute {
         Response(HttpStatus.OK, "application/json", mapper.writeValueAsBytes(persons))
     }
 
-    fun save() = RouteListener().process { req ->
-        req.params("body", {
+    fun save() = RouteListener().process {route ->
+        route.request.params("body", {
             val person = mapper.readValue(it, Person::class.java)
             if (person.id > 0) {
                 // Update person
@@ -37,8 +37,8 @@ object ApiRoute {
         })
     }
 
-    fun findById() = RouteListener().process { req ->
-        req.params("id", { id ->
+    fun findById() = RouteListener().process { route ->
+        route.request.params("id", { id ->
             val person = persons.firstOrNull { it.id == id.toInt() }
             if (person == null) {
                 Response(HttpStatus.NOT_FOUND, "application/json", "{}".toByteArray())

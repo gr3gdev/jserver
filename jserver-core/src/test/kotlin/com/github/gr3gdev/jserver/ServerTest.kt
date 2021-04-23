@@ -16,7 +16,8 @@ class ServerTest {
         val max = 100
         val server = Server().port(8080)
         val rand = SecureRandom()
-        server.get("/test", RouteListener().process { req ->
+        server.get("/test", RouteListener().process { route ->
+            val req = route.request
             val res = Response()
             req.params("message").ifPresent {
                 val content = ByteArray(100000)

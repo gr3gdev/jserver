@@ -2,6 +2,7 @@ package com.github.gr3gdev.jserver
 
 import com.github.gr3gdev.jserver.http.RequestMethod
 import com.github.gr3gdev.jserver.logger.Logger
+import com.github.gr3gdev.jserver.plugin.ServerPlugin
 import com.github.gr3gdev.jserver.route.HttpStatus
 import com.github.gr3gdev.jserver.route.Response
 import com.github.gr3gdev.jserver.route.RouteListener
@@ -24,6 +25,7 @@ class Server {
     private var serverSocket: ServerSocket? = null
     private var port = 9000
     private val socketEvents: MutableList<SocketEvent> = ArrayList()
+    private var serverPlugins: Array<out ServerPlugin>? = null
 
     private var startupEvent: (() -> Unit)? = null
 
@@ -127,7 +129,19 @@ class Server {
      * @return Server
      */
     fun process(pPath: String, pRequestMethod: RequestMethod, pRouteListener: RouteListener): Server {
+        pRouteListener.registerPlugins(serverPlugins)
         socketEvents.add(SocketEvent(pPath, pRequestMethod, pRouteListener))
+        return this
+    }
+
+    /**
+     * Add plugins.
+     *
+     * @param pPlugins List of plugins
+     * @return Server
+     */
+    fun plugins(vararg pPlugins: ServerPlugin): Server {
+        serverPlugins = pPlugins
         return this
     }
 

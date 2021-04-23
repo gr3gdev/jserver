@@ -2,6 +2,7 @@ package com.github.gr3gdev.jserver.route
 
 import com.github.gr3gdev.jserver.http.Request
 import com.github.gr3gdev.jserver.logger.Logger
+import com.github.gr3gdev.jserver.plugin.ServerPlugin
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 
@@ -13,7 +14,8 @@ import java.nio.charset.StandardCharsets
 class RouteListener constructor() {
 
     private var responseData = Response()
-    private var run: ((Request) -> Response)? = null
+    private var run: ((Route) -> Response)? = null
+    private var plugins: Array<out ServerPlugin>? = null
 
     constructor(status: HttpStatus, contentType: String, content: ByteArray) : this() {
         responseData = Response(status, contentType, content)
@@ -26,7 +28,7 @@ class RouteListener constructor() {
     /**
      * Process before rendered.
      */
-    fun process(run: (Request) -> Response): RouteListener {
+    fun process(run: (Route) -> Response): RouteListener {
         this.run = run
         return this
     }
@@ -54,10 +56,14 @@ class RouteListener constructor() {
     fun handleEvent(request: Request, output: OutputStream) {
         var response = this.responseData
         if (this.run != null) {
-            response = this.run!!(request)
+            response = this.run!!(Route(request, plugins))
         }
         Logger.debug("$request -- $response")
         output.write(constructResponseHeader(response).plus(response.content))
+    }
+
+    internal fun registerPlugins(serverPlugins: Array<out ServerPlugin>?) {
+        plugins = serverPlugins
     }
 
 }

@@ -1,4 +1,4 @@
-package com.github.gr3gdev.jserver.samples.bean
+package com.github.gr3gdev.jserver.test.bean
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.github.gr3gdev.jserver.security.user.UserData

@@ -22,8 +22,8 @@ object ReactRoute {
         Response(HttpStatus.OK, Response.File("/react/index.html", "text/html"))
     }
 
-    fun static(path: String) = RouteListener().process { req ->
-        req.params("file", { file ->
+    fun static(path: String) = RouteListener().process { route ->
+        route.request.params("file", { file ->
             val contentType = mimeTypes.entries.firstOrNull { file.endsWith(it.key) }?.value ?: "text/plain"
             Response(HttpStatus.OK, Response.File("$path/$file", contentType))
         }, {
