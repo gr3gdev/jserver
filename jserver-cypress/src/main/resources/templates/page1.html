@@ -1,0 +1,16 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Thymeleaf plugin</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{css/test.css}"/>
+</head>
+
+<body>
+<h1 th:text="#{messages.title}">Title</h1>
+<p th:utext="${welcome}">Welcome !</p>
+</body>
+
+</html>

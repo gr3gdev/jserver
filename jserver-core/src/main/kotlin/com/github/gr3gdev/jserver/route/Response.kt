@@ -14,7 +14,7 @@ class Response() {
     internal var status = HttpStatus.OK
     internal var contentType = "text/html"
     internal var redirect: String? = null
-    internal val cookies = HashMap<String, String>()
+    internal val cookies = HashSet<Cookie>()
 
     constructor(status: HttpStatus, contentType: String, content: ByteArray) : this(status) {
         this.contentType = contentType
@@ -38,8 +38,13 @@ class Response() {
         return this
     }
 
-    fun cookie(name: String, value: String): Response {
-        cookies[name] = value
+    /**
+     * Add a cookie.
+     *
+     * @param cookie Cookie
+     */
+    fun cookie(cookie: Cookie): Response {
+        cookies.add(cookie)
         return this
     }
 
@@ -58,6 +63,47 @@ class Response() {
 
     override fun toString(): String {
         return "Response(status=$status, contentType='$contentType')"
+    }
+
+    enum class CookieSameSite {
+        STRICT, LAX, NONE;
+
+        fun value() = name.toLowerCase().capitalize()
+    }
+
+    class Cookie(
+            private val name: String,
+            private val value: String,
+            private val maxAge: Int = 3600,
+            private val domain: String? = null,
+            private val path: String? = null,
+            private val secure: Boolean = false,
+            private val httpOnly: Boolean = true,
+            private val sameSite: CookieSameSite = CookieSameSite.LAX
+    ) {
+        override fun toString(): String {
+            val secureValue = if (secure) {
+                "; Secure"
+            } else {
+                ""
+            }
+            val httpOnlyValue = if (httpOnly) {
+                "; HttpOnly"
+            } else {
+                ""
+            }
+            val domainValue = if (domain != null) {
+                "; Domain=$domain"
+            } else {
+                ""
+            }
+            val pathValue = if (path != null) {
+                "; Path=$path"
+            } else {
+                ""
+            }
+            return "$name=$value; Max-Age=$maxAge$domainValue$pathValue$secureValue$httpOnlyValue; SameSite=${sameSite.value()}"
+        }
     }
 
     class File(private val path: String, internal val contentType: String) {

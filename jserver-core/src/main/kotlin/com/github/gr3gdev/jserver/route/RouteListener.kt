@@ -42,7 +42,7 @@ class RouteListener constructor() {
             headers.add("Content-Type: ${response.contentType}")
             headers.add("Content-Length: ${response.content.size}")
         }
-        response.cookies.forEach { (key, value) -> headers.add("Set-Cookie: $key=$value") }
+        response.cookies.forEach { cookie -> headers.add("Set-Cookie: $cookie") }
         return "HTTP/1.1 ${response.status.code}\r\n${headers.joinToString("\r\n")}\r\n\r\n"
                 .toByteArray(StandardCharsets.UTF_8)
     }

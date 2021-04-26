@@ -24,8 +24,9 @@ object LoginRoute {
                     val token = route.plugin(TokenServerPlugin::class.java)
                             .createToken(user, 60 * 60 * 1000)
                     Response(HttpStatus.OK)
-                            .cookie("MY_AUTH_COOKIE", token)
-                            .cookie("TEST", "OK")
+                            .cookie(Response.Cookie("MY_AUTH_COOKIE", token))
+                            .cookie(Response.Cookie("TEST", "OK", 600,
+                                    path = "/test", secure = true))
                             .redirect("/secure")
                 } else {
                     Logger.error("User or password incorrect")

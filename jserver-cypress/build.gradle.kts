@@ -9,6 +9,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")
     implementation(project(":jserver-security"))
+    implementation(project(":jserver-thymeleaf"))
     implementation(project(":jserver-core"))
 }
 
