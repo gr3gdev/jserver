@@ -11,19 +11,15 @@ import com.github.gr3gdev.jserver.test.bean.User
 object SecureRoute {
 
     fun get() = RouteListener().process { route ->
-        TokenRequest.getTokenFromCookie(route.request, "MY_AUTH_COOKIE", { token ->
+        var res = Response("/login")
+        TokenRequest.getTokenFromCookie(route.request, "MY_AUTH_COOKIE").ifPresent { token ->
             route.plugin(TokenClientPlugin::class.java)
-                    .getUserData(token, User::class.java, { userToken ->
+                    .getUserData(token, User::class.java).ifPresent { userToken ->
                         Logger.debug("User: $userToken")
-                        Response(HttpStatus.OK, Response.File("/pages/secure.html", "text/html"))
-                    }, {
-                        Logger.error("Authentication invalid")
-                        Response("/login")
-                    })
-        }, {
-            Logger.error("Authentication not found")
-            Response("/login")
-        })
+                        res = Response(HttpStatus.OK, Response.File("/pages/secure.html", "text/html"))
+                    }
+        }
+        res
     }
 
 }

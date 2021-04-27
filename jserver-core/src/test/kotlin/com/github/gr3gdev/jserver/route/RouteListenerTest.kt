@@ -26,10 +26,6 @@ class RouteListenerTest {
             TODO("Not yet implemented")
         }
 
-        override fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T): T {
-            TODO("Not yet implemented")
-        }
-
         override fun headers(key: String, value: String) {
             TODO("Not yet implemented")
         }
@@ -39,10 +35,6 @@ class RouteListenerTest {
         }
 
         override fun params(key: String): Optional<String> {
-            TODO("Not yet implemented")
-        }
-
-        override fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T): T {
             TODO("Not yet implemented")
         }
 

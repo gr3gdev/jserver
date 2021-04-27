@@ -16,33 +16,26 @@ object LoginRoute {
     fun get() = RouteListener(HttpStatus.OK, Response.File("/pages/login.html", "text/html"))
 
     fun post() = RouteListener().process { route ->
+        var res = Response(HttpStatus.OK)
+                .redirect("/login")
         val request = route.request
-        request.params("username", { username ->
-            request.params("password", { password ->
+        request.params("username").ifPresent { username ->
+            request.params("password").ifPresent { password ->
                 if (username == user.username && bCryptPasswordManager.matches(password, user.password)) {
                     Logger.debug("User authenticated")
                     val token = route.plugin(TokenServerPlugin::class.java)
                             .createToken(user, 60 * 60 * 1000)
-                    Response(HttpStatus.OK)
+                    res = Response(HttpStatus.OK)
                             .cookie(Response.Cookie("MY_AUTH_COOKIE", token))
                             .cookie(Response.Cookie("TEST", "OK", 600,
                                     path = "/test", secure = true))
                             .redirect("/secure")
                 } else {
                     Logger.error("User or password incorrect")
-                    Response(HttpStatus.OK)
-                            .redirect("/login")
                 }
-            }, {
-                Logger.error("Password is empty")
-                Response(HttpStatus.OK)
-                        .redirect("/login")
-            })
-        }, {
-            Logger.error("Username is empty")
-            Response(HttpStatus.OK)
-                    .redirect("/login")
-        })
+            }
+        }
+        res
     }
 
 }

@@ -1,6 +1,7 @@
 package com.github.gr3gdev.jserver.security.http
 
 import com.github.gr3gdev.jserver.http.Request
+import java.util.*
 
 
 object TokenRequest {
@@ -11,41 +12,37 @@ object TokenRequest {
     /**
      * Get JWT token from Authorization header.
      */
-    fun <T> getTokenFromHeader(req: Request, ifPresent: (token: String) -> T, orElse: () -> T): T {
+    fun getTokenFromHeader(req: Request): Optional<String> {
         // Token in Authorization
-        return req.headers(AUTH, {
+        var token = Optional.empty<String>()
+        req.headers(AUTH).ifPresent {
             if (it.startsWith("Bearer", true)) {
-                ifPresent(it.substring("Bearer ".length))
-            } else {
-                orElse()
+                token = Optional.of(it.substring("Bearer ".length))
             }
-        }, {
-            orElse()
-        })
+        }
+        return token
     }
 
     /**
      * Get JWT token from Cookie.
      */
-    fun <T> getTokenFromCookie(req: Request, cookieName: String, ifPresent: (token: String) -> T, orElse: () -> T): T {
+    fun getTokenFromCookie(req: Request, cookieName: String): Optional<String> {
         // Token in cookie
-        return req.headers(COOKIES, { ch ->
+        var token = Optional.empty<String>()
+        req.headers(COOKIES).ifPresent { ch ->
             val cookies = ch.split(" ")
             val tokenCookie = cookies.find { c -> c.startsWith("$cookieName=") }.orEmpty()
             if (tokenCookie.isNotEmpty() && tokenCookie.contains("=")) {
                 val tokenValue = tokenCookie.split("=")[1]
-                val token = if (tokenValue.endsWith(";")) {
-                    tokenValue.substring(0, tokenValue.length - 1)
+                token = if (tokenValue.endsWith(";")) {
+                    Optional.of(tokenValue.substring(0, tokenValue.length - 1))
                 } else {
-                    tokenValue
+                    Optional.of(tokenValue)
                 }
-                ifPresent(token)
-            } else {
-                orElse()
+
             }
-        }, {
-            orElse()
-        })
+        }
+        return token
     }
 
 }

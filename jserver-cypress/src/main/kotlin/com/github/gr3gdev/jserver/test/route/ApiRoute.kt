@@ -20,33 +20,31 @@ object ApiRoute {
     }
 
     fun save() = RouteListener().process {route ->
-        route.request.params("body", {
+        var res = Response(HttpStatus.INTERNAL_SERVER_ERROR)
+        route.request.params("body").ifPresent {
             val person = mapper.readValue(it, Person::class.java)
             if (person.id > 0) {
                 // Update person
                 persons.first { p -> p.id == person.id }.name = person.name
-                Response(HttpStatus.OK, "application/json", mapper.writeValueAsBytes(person))
+                res = Response(HttpStatus.OK, "application/json", mapper.writeValueAsBytes(person))
             } else {
                 // Create person
                 persons.add(person)
                 person.id = persons.size
-                Response(HttpStatus.CREATED, "application/json", mapper.writeValueAsBytes(person))
+                res = Response(HttpStatus.CREATED, "application/json", mapper.writeValueAsBytes(person))
             }
-        }, {
-            Response(HttpStatus.INTERNAL_SERVER_ERROR)
-        })
+        }
+        res
     }
 
     fun findById() = RouteListener().process { route ->
-        route.request.params("id", { id ->
+        var res = Response(HttpStatus.NOT_FOUND, "application/json", "{}".toByteArray())
+        route.request.params("id").ifPresent { id ->
             val person = persons.firstOrNull { it.id == id.toInt() }
-            if (person == null) {
-                Response(HttpStatus.NOT_FOUND, "application/json", "{}".toByteArray())
-            } else {
-                Response(HttpStatus.OK, "application/json", mapper.writeValueAsBytes(person))
+            if (person != null) {
+                res = Response(HttpStatus.OK, "application/json", mapper.writeValueAsBytes(person))
             }
-        }, {
-            Response(HttpStatus.NOT_FOUND, "application/json", "{}".toByteArray())
-        })
+        }
+        res
     }
 }

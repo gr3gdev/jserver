@@ -23,12 +23,12 @@ object ReactRoute {
     }
 
     fun static(path: String) = RouteListener().process { route ->
-        route.request.params("file", { file ->
+        var res = Response(HttpStatus.NOT_FOUND)
+        route.request.params("file").ifPresent { file ->
             val contentType = mimeTypes.entries.firstOrNull { file.endsWith(it.key) }?.value ?: "text/plain"
-            Response(HttpStatus.OK, Response.File("$path/$file", contentType))
-        }, {
-            Response(HttpStatus.NOT_FOUND)
-        })
+            res = Response(HttpStatus.OK, Response.File("$path/$file", contentType))
+        }
+        res
     }
 
 }

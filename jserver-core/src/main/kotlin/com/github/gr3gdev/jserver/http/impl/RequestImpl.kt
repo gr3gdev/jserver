@@ -33,22 +33,8 @@ class RequestImpl(private val remoteAddress: String, input: InputStream) : Reque
         return protocol
     }
 
-    private fun <T> conditional(optional: Optional<String>, ifPresent: (value: String) -> T, orElse: () -> T): T {
-        var res: T? = null
-        optional.ifPresentOrElse({
-            res = ifPresent(it)
-        }, {
-            res = orElse()
-        })
-        return res!!
-    }
-
     override fun headers(key: String): Optional<String> {
         return Optional.ofNullable(headers[key.toLowerCase()])
-    }
-
-    override fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T): T {
-        return conditional(headers(key), ifPresent, orElse)
     }
 
     override fun headers(key: String, value: String) {
@@ -61,10 +47,6 @@ class RequestImpl(private val remoteAddress: String, input: InputStream) : Reque
 
     override fun params(key: String): Optional<String> {
         return Optional.ofNullable(parameters[key.toLowerCase()])
-    }
-
-    override fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T): T {
-        return conditional(params(key), ifPresent, orElse)
     }
 
     override fun params(key: String, value: String) {

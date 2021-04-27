@@ -49,27 +49,16 @@ class TokenRequestTest {
         override fun path(): String = ""
         override fun method(): String = "GET"
         override fun protocol(): String = "http"
+
         override fun headers(key: String): Optional<String> = Optional.ofNullable(headers[key])
-        override fun <T> headers(key: String, ifPresent: (header: String) -> T, orElse: () -> T): T {
-            var res: T? = null
-            headers(key).ifPresentOrElse({
-                res = ifPresent(it)
-            }, {
-                res = orElse()
-            })
-            return res!!
-        }
 
         override fun headers(key: String, value: String) {}
+
         override fun headersNames(): MutableSet<String> {
             TODO("Not yet implemented")
         }
 
         override fun params(key: String): Optional<String> {
-            TODO("Not yet implemented")
-        }
-
-        override fun <T> params(key: String, ifPresent: (param: String) -> T, orElse: () -> T): T {
             TODO("Not yet implemented")
         }
 
@@ -146,28 +135,26 @@ class TokenRequestTest {
     @Test
     fun `Test getToken from header missing`() {
         val request = RequestTest(HashMap())
-        TokenRequest.getTokenFromHeader(request, {
+        TokenRequest.getTokenFromHeader(request).ifPresent {
             fail("Token present")
-        }, {
-            assertTrue(true)
-        })
+        }
+        assertTrue(true)
     }
 
     @Test
     fun `Test getToken from header Basic`() {
         val request = RequestTest(mapOf(Pair("Authorization", "Basic ABCDEFGHIJKL")))
-        TokenRequest.getTokenFromHeader(request, {
+        TokenRequest.getTokenFromHeader(request).ifPresent {
             fail("Token present")
-        }, {
-            assertTrue(true)
-        })
+        }
+        assertTrue(true)
     }
 
     @Test
     fun `Test getToken from header`() {
         val token = SecureRandom().nextLong().toString()
         val request = RequestTest(mapOf(Pair("Authorization", "Bearer $token")))
-        TokenRequest.getTokenFromHeader(request, {
+        TokenRequest.getTokenFromHeader(request).ifPresentOrElse({
             assertEquals(token, it)
         }, {
             fail("Token missing")
@@ -178,7 +165,7 @@ class TokenRequestTest {
     fun `Test getToken from Cookie 1`() {
         val token = SecureRandom().nextLong().toString()
         val request = RequestTest(mapOf(Pair("Cookie", "COOKIE1=A; MY_COOKIE1=$token; COOKIE2=B; COOKIE3=C")))
-        TokenRequest.getTokenFromCookie(request, "MY_COOKIE1", {
+        TokenRequest.getTokenFromCookie(request, "MY_COOKIE1").ifPresentOrElse({
             assertEquals(token, it)
         }, {
             fail("Cookie not found")
@@ -189,7 +176,7 @@ class TokenRequestTest {
     fun `Test getToken from Cookie 2`() {
         val token = SecureRandom().nextLong().toString()
         val request = RequestTest(mapOf(Pair("Cookie", "COOKIE1=ABCDEFGHIJKL; MY_COOKIE2=$token")))
-        TokenRequest.getTokenFromCookie(request, "MY_COOKIE2", {
+        TokenRequest.getTokenFromCookie(request, "MY_COOKIE2").ifPresentOrElse({
             assertEquals(token, it)
         }, {
             fail("Cookie not found")
@@ -203,7 +190,7 @@ class TokenRequestTest {
         val tokenClient = TokenClientPlugin(publicKey)
         val userData = UserTest("Name1", 1)
         val token = tokenServer.createToken(userData, 60 * 60 * 1000)
-        tokenClient.getUserData(token, UserTest::class.java, {
+        tokenClient.getUserData(token, UserTest::class.java).ifPresentOrElse({
             val data = it.data
             assertEquals("Name1", data.name)
             assertEquals(1, data.count)

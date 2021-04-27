@@ -6,25 +6,23 @@ import com.github.gr3gdev.jserver.security.user.JwtData
 import com.github.gr3gdev.jserver.security.user.UserData
 import io.jsonwebtoken.Jwts
 import java.security.PublicKey
+import java.util.*
 
 class TokenClientPlugin(private val key: PublicKey) : ServerPlugin {
 
     /**
      * Get user data from JWT token.
      */
-    fun <T : UserData, R> getUserData(token: String?, clazz: Class<T>,
-                                      ifPresent: (data: JwtData<T>) -> R, orElse: () -> R): R {
-        return if (token != null) {
+    fun <T : UserData> getUserData(token: String?, clazz: Class<T>): Optional<JwtData<T>> {
+        if (token != null) {
             try {
                 val claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token)
-                ifPresent(JwtData(claims.body, clazz))
+                return Optional.of(JwtData(claims.body, clazz))
             } catch (exc: Exception) {
                 Logger.error("JWT UserData error", exc)
-                orElse()
             }
-        } else {
-            orElse()
         }
+        return Optional.empty()
     }
 
 }
