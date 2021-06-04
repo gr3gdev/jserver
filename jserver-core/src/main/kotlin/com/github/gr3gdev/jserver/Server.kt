@@ -49,14 +49,15 @@ class Server {
     @Synchronized
     fun stop() {
         active = false
-        if (serverSocket != null) {
-            serverSocket!!.close()
+        while (serverSocket != null && !serverSocket!!.isClosed) {
+            // Wait server stopped
+            Thread.sleep(200)
         }
     }
 
     @Synchronized
     fun isAlive(): Boolean {
-        return active
+        return active && serverSocket != null && !serverSocket!!.isClosed
     }
 
     @Synchronized
@@ -170,6 +171,9 @@ class Server {
                         Logger.error("Server socket error", exc)
                     }
                 }
+            }
+            if (serverSocket != null) {
+                serverSocket!!.close()
             }
             Logger.warn("Server stopped")
         }
