@@ -27,11 +27,11 @@ class ThymeleafPlugin(cacheTTLMs: Long = 3600000L) : ServerPlugin {
         templateEngine.setMessageResolver(StandardMessageResolver())
     }
 
-    fun process(page: String, variables: Map<String, Any> = emptyMap(), locale: Locale = Locale.FRANCE): Response {
+    fun process(page: String, variables: Map<String, Any?> = emptyMap(), locale: Locale = Locale.FRANCE): Response {
         val content = templateEngine.process(page, JServerContext(variables, locale))
         return Response(HttpStatus.OK, "text/html", content.toByteArray(StandardCharsets.UTF_8))
     }
 
-    internal class JServerContext(variables: Map<String, Any>, locale: Locale) : AbstractContext(locale, variables)
+    internal class JServerContext(variables: Map<String, Any?>, locale: Locale) : AbstractContext(locale, variables)
 
 }
