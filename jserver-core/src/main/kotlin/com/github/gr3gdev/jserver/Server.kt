@@ -10,8 +10,10 @@ import com.github.gr3gdev.jserver.socket.SocketEvent
 import com.github.gr3gdev.jserver.socket.SocketReader
 import java.io.IOException
 import java.net.ServerSocket
+import java.net.SocketException
 import java.nio.charset.StandardCharsets
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * jOwl Server.
@@ -20,7 +22,7 @@ import java.util.*
  */
 class Server {
 
-    private var active = false
+    private val active = AtomicBoolean(false)
     private val runnable: Runnable
     private var serverSocket: ServerSocket? = null
     private var port = 9000
@@ -39,28 +41,24 @@ class Server {
         return this
     }
 
-    @Synchronized
     fun start(): Server {
-        active = true
+        active.set(true)
         Thread(runnable, "jServer").start()
         return this
     }
 
-    @Synchronized
     fun stop() {
-        active = false
-        while (serverSocket != null && !serverSocket!!.isClosed) {
-            // Wait server stopped
-            Thread.sleep(200)
+        Logger.info("Stopping server...")
+        active.set(false)
+        if (serverSocket != null) {
+            serverSocket!!.close()
         }
     }
 
-    @Synchronized
     fun isAlive(): Boolean {
-        return active && serverSocket != null && !serverSocket!!.isClosed
+        return active.get() && serverSocket != null && !serverSocket!!.isClosed
     }
 
-    @Synchronized
     fun onStartup(event: () -> Unit): Server {
         startupEvent = event
         return this
@@ -163,17 +161,16 @@ class Server {
             if (startupEvent != null) {
                 startupEvent!!()
             }
-            while (active) {
+            while (active.get()) {
                 try {
-                    Thread(SocketReader(serverSocket!!.accept(), socketEvents), "jServer SocketReader").start()
+                    if (serverSocket != null && !serverSocket!!.isClosed) {
+                        Thread(SocketReader(serverSocket!!.accept(), socketEvents), "jServer SocketReader").start()
+                    }
                 } catch (exc: IOException) {
-                    if (active) {
+                    if (active.get() && exc !is SocketException) {
                         Logger.error("Server socket error", exc)
                     }
                 }
-            }
-            if (serverSocket != null) {
-                serverSocket!!.close()
             }
             Logger.warn("Server stopped")
         }
