@@ -9,7 +9,7 @@ public class ResponseTest {
     @Test
     public void testReadHtmlFile() {
         final Response res = new Response();
-        res.file(Response.createFile("/test/page1.html", "text/html"));
+        res.file("/test/page1.html", "text/html");
         assertEquals("Content type not match", "text/html", res.getContentType());
         assertEquals("Content not match", """
                 <!DOCTYPE HTML>
@@ -26,7 +26,7 @@ public class ResponseTest {
     @Test
     public void testReadJsFile() {
         final Response res = new Response();
-        res.file(Response.createFile("/test/script.js", "application/javascript"));
+        res.file("/test/script.js", "application/javascript");
         assertEquals("Content type not match", "application/javascript", res.getContentType());
         assertEquals("Content not match", """
                 function test() {
