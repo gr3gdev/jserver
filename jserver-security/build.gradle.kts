@@ -1,17 +1,23 @@
 plugins {
-    kotlin("jvm") version "1.4.10"
     `maven-publish`
+    `java-library`
+}
+
+java {
+    toolchain {
+        languageVersion.set(project.ext["javaVersion"] as JavaLanguageVersion)
+    }
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("org.mindrot:jbcrypt:0.4")
-    implementation("io.jsonwebtoken:jjwt:0.9.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.69")
+    implementation("io.fusionauth:fusionauth-jwt:5.0.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.0")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:2.3.2")
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
-    implementation(project(":jserver-core"))
+    implementation(project(":jserver-framework"))
     testImplementation("junit:junit:4.13")
+    testImplementation("org.mockito:mockito-core:4.0.0")
 }
 
 publishing {

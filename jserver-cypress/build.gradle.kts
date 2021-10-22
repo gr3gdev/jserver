@@ -1,46 +1,29 @@
 plugins {
-    kotlin("jvm") version "1.4.10"
     id("com.github.node-gradle.node") version "2.2.4"
-    id("gregdev.gradle.docker") version "1.0.0"
-    application
+    java
+}
+
+java {
+    toolchain {
+        languageVersion.set(project.ext["javaVersion"] as JavaLanguageVersion)
+    }
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.69")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.0")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.13.0")
     implementation(project(":jserver-security"))
     implementation(project(":jserver-thymeleaf"))
-    implementation(project(":jserver-core"))
-}
-
-application {
-    mainClass.set("com.github.gr3gdev.jserver.test.CypressTestKt")
-}
-
-docker {
-    imageName = "gr3gdev/jserver-cypress"
-    platforms = "linux/amd64"
-    dependsOn = "installDist"
-    args = listOf("-p", "9000:9000", "-d")
+    implementation(project(":jserver-framework"))
 }
 
 tasks {
-    compileKotlin {
-        dependsOn("buildFrontReact")
-        copy {
-            from("build/resources/main")
-            into("build/classes/kotlin/main")
-        }
-        copy {
-            from("front-react/build")
-            into("build/classes/kotlin/main/react")
-        }
-    }
     withType(Jar::class) {
         doFirst {
             copy {
                 from("front-react/build")
-                into("build/classes/kotlin/main/react")
+                into("build/classes/java/main/react")
             }
         }
     }

@@ -28,8 +28,17 @@ jobs:
         node-version: '12'
     - name: Build with Gradle
       run: gradle test
-    - name: Prepare cypress
+    - name: Prepare cypress jar
+      working-directory: jserver-cypress
+      run: gradle jar
+    - name: Start server
+      working-directory: jserver-core
+      run: gradle dockerRun
+    - name: Prepare cypress tests
       working-directory: jserver-cypress
       run: npm install
     - name: Cypress tests
-      run: gradle clean dockerRun cypressRun dockerStop
+      run: gradle cypressRun
+    - name: Stop server
+      working-directory: jserver-core
+      run: gradle dockerStop

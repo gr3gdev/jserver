@@ -1,11 +1,16 @@
 plugins {
-    kotlin("jvm") version "1.4.10"
     `maven-publish`
+    `java-library`
+}
+
+java {
+    toolchain {
+        languageVersion.set(project.ext["javaVersion"] as JavaLanguageVersion)
+    }
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
-    implementation(project(":jserver-core"))
+    implementation(project(":jserver-framework"))
     implementation("org.thymeleaf:thymeleaf:3.0.12.RELEASE")
 }
 
