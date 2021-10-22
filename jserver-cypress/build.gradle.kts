@@ -20,6 +20,7 @@ dependencies {
 
 tasks {
     withType(Jar::class) {
+        dependsOn("installFrontReact")
         doFirst {
             copy {
                 from("front-react/build")
