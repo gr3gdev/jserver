@@ -39,6 +39,10 @@ tasks {
         setWorkingDir(file("front-react"))
         setArgs(listOf("run", "build"))
     }
+    register("install", com.moowork.gradle.node.npm.NpmTask::class) {
+        group = "front"
+        setArgs(listOf("install"))
+    }
     register("cypressRun", com.moowork.gradle.node.npm.NpmTask::class) {
         group = "verification"
         setArgs(listOf("run", "cy:run"))
