@@ -1,5 +1,4 @@
 plugins {
-    id("gregdev.gradle.docker") version "1.0.0"
     application
 }
 
@@ -7,13 +6,6 @@ java {
     toolchain {
         languageVersion.set(project.ext["javaVersion"] as JavaLanguageVersion)
     }
-}
-
-docker {
-    imageName = "gr3gdev/jserver"
-    platforms = "linux/amd64"
-    dependsOn = "installDist"
-    args = listOf("-p", "9000:9000", "-d", "-v", "${rootProject.projectDir.absolutePath + "/jserver-cypress/build/libs"}:/apps")
 }
 
 application {
