@@ -1,5 +1,7 @@
 FROM openjdk:11-jre-slim-stretch
 
+MAINTAINER Gregory TARDIVEL
+
 ENV DEV_MODE 0
 
 WORKDIR /app
