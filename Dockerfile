@@ -1,4 +1,4 @@
-FROM openjdk11:11-jre-slim-stretch
+FROM openjdk:11-jre-slim-stretch
 
 ENV DEV_MODE 0
 
