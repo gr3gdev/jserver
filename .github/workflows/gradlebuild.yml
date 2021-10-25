@@ -36,6 +36,7 @@ jobs:
     - name: Prepare cypress tests
       run: npm install
     - name: Cypress tests
+      working-directory: jserver-cypress
       run: gradle cypressRun
     - name: Stop server
       run: gradle dockerStop
