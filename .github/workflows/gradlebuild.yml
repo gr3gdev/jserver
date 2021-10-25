@@ -32,13 +32,10 @@ jobs:
       working-directory: jserver-cypress
       run: gradle jar
     - name: Start server
-      working-directory: jserver-core
       run: gradle dockerRun
     - name: Prepare cypress tests
-      working-directory: jserver-cypress
       run: npm install
     - name: Cypress tests
       run: gradle cypressRun
     - name: Stop server
-      working-directory: jserver-core
       run: gradle dockerStop
