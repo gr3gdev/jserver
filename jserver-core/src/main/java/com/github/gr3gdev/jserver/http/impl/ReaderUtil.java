@@ -37,7 +37,7 @@ public class ReaderUtil {
         if (pathParameters != null) {
             payload.append(pathParameters);
         }
-        if (!payload.isEmpty()) {
+        if (payload.length() > 0) {
             contentType.ifPresentOrElse(
                     it -> {
                         if (it.startsWith("application/json")) {

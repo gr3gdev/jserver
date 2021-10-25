@@ -14,7 +14,7 @@ docker {
 
 allprojects {
 
-    project.ext.set("javaVersion", JavaLanguageVersion.of(15))
+    project.ext.set("javaVersion", JavaLanguageVersion.of(11))
 
     repositories {
         mavenCentral()

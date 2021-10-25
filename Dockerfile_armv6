@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11
+FROM arm32v6/openjdk:11
 
 ENV DEV_MODE 0
 
