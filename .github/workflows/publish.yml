@@ -34,7 +34,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: jserver-core
+          context: ./jserver-core/.
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm/v7,linux/arm64/v8
           push: true
@@ -42,7 +42,7 @@ jobs:
       - name: Build and push (arm32v6)
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./jserver-core/.
           file: ./Dockerfile_armv6
           push: true
           tags: gr3gdev/jserver.arm32v6:latest
